@@ -1,41 +1,65 @@
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import Header from "../components/Header";
-import axios from "axios";
 import Card from "../components/Card";
-
+import Loading from "../components/Loading";
+import EmptyState from "../components/EmptyState";
+import { useFavorites } from "../contexts/FavoritesContext";
 
 const LikePage = () => {
-  const [listData, setListData] = useState([]);
+  const { favoriteMovies, loading } = useFavorites();
+  const [sortBy, setSortBy] = useState("date");
 
-  useEffect(() => {
-    let moviesId = window.localStorage.movies
-      ? window.localStorage.movies.split(",")
-      : [];
-
-    for (let i = 0; i < moviesId.length; i++) {
-      axios
-        .get(
-          `https://api.themoviedb.org/3/movie/${moviesId[i]}?api_key=ed82f4c18f2964e75117c2dc65e2161d&language=fr-FR`
-        )
-        .then((res) => setListData((listData) => [...listData, res.data]));
+  const sortedMovies = [...favoriteMovies].sort((a, b) => {
+    switch (sortBy) {
+      case "rating":
+        return b.vote_average - a.vote_average;
+      case "title":
+        return a.title.localeCompare(b.title);
+      case "date":
+        return new Date(b.release_date) - new Date(a.release_date);
+      default:
+        return 0;
     }
-  }, []);
+  });
 
   return (
     <div className="user-list-page">
       <Header />
-      <h2>
-        Coups de coeur <span>💖</span>
-      </h2>
-      <div className="result">
-        {listData.length > 0 ? (
-          listData.map((movie) => <Card movie={movie} key={movie.id} />)
-        ) : (
-          <h2>Aucun coup de coeur pour le moment</h2>
+      <div className="page-header">
+        <h2>
+          Coups de coeur <span>💖</span>
+        </h2>
+        {favoriteMovies.length > 0 && (
+          <div className="sort-options">
+            <label htmlFor="sort-favorites">Trier par :</label>
+            <select
+              id="sort-favorites"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="date">Date d'ajout</option>
+              <option value="rating">Note</option>
+              <option value="title">Titre</option>
+            </select>
+          </div>
         )}
       </div>
+
+      {loading ? (
+        <Loading />
+      ) : favoriteMovies.length > 0 ? (
+        <div className="result">
+          {sortedMovies.map((movie) => (
+            <Card movie={movie} key={movie.id} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          icon="💔"
+          title="Aucun coup de cœur"
+          message="Commencez à ajouter vos films préférés pour les retrouver ici"
+        />
+      )}
     </div>
   );
 };
