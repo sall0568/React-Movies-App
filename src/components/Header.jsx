@@ -3,9 +3,18 @@ import { NavLink } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
 import { useFavorites } from "../contexts/FavoritesContext";
 
-const Header = () => {
+const Header = ({ hideFullHeader = false }) => {
   const { favoriteIds } = useFavorites();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Si hideFullHeader est true, on affiche seulement le ThemeToggle
+  if (hideFullHeader) {
+    return (
+      <div className="header header-minimal">
+        <ThemeToggle />
+      </div>
+    );
+  }
 
   return (
     <div className="header">
@@ -16,6 +25,16 @@ const Header = () => {
       >
         {menuOpen ? "✕" : "☰"}
       </button>
+
+      <h1>React Movies</h1>
+
+      {menuOpen && (
+        <div 
+          className="nav-overlay" 
+          onClick={() => setMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
 
       <nav className={menuOpen ? "nav-open" : ""}>
         <ul>
@@ -42,8 +61,6 @@ const Header = () => {
           </li>
         </ul>
       </nav>
-
-      <h1>React Movies</h1>
 
       <ThemeToggle />
     </div>

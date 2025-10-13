@@ -8,6 +8,8 @@ import Loading from "./components/Loading";
 const Home = lazy(() => import("./pages/Home"));
 const LikePage = lazy(() => import("./pages/LikePage"));
 const MovieDetail = lazy(() => import("./pages/MovieDetail"));
+const PersonDetail = lazy(() => import("./pages/PersonDetail"));
+const TVShows = lazy(() => import("./pages/TVShows"));
 
 const AppContent = () => {
   const { theme } = useTheme();
@@ -20,6 +22,8 @@ const AppContent = () => {
             <Route path="/" element={<Home />} />
             <Route path="/coups-de-coeur" element={<LikePage />} />
             <Route path="/movie/:id" element={<MovieDetail />} />
+            <Route path="/person/:id" element={<PersonDetail />} />
+            <Route path="/tv-shows" element={<TVShows />} />
             <Route path="*" element={<Home />} />
           </Routes>
         </Suspense>

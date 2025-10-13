@@ -1,14 +1,14 @@
 import axios from "axios";
 import React, { useState, useEffect, useCallback } from "react";
 import { useDebounce } from "../hooks/useDebounce";
-import Card from "./Card";
+import TVCard from "./TVCard";
 import Loading from "./Loading";
 import ErrorMessage from "./ErrorMessage";
 import EmptyState from "./EmptyState";
 import GenreFilter from "./GenreFilter";
 
-const Form = () => {
-  const [moviesData, setMoviesData] = useState([]);
+const TVForm = () => {
+  const [tvData, setTvData] = useState([]);
   const [search, setSearch] = useState("");
   const [sortGoodBad, setSortGoodBad] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -20,8 +20,7 @@ const Form = () => {
 
   const debouncedSearch = useDebounce(search, 500);
 
-  // Fonction pour charger les films populaires/récents
-  const fetchPopularMovies = useCallback(async (pageNum = 1) => {
+  const fetchPopularTV = useCallback(async (pageNum = 1) => {
     setLoading(true);
     setError(null);
 
@@ -30,7 +29,7 @@ const Form = () => {
 
     try {
       const response = await axios.get(
-        `${BASE_URL}/movie/now_playing`,
+        `${BASE_URL}/tv/popular`,
         {
           params: {
             api_key: API_KEY,
@@ -41,37 +40,35 @@ const Form = () => {
       );
 
       if (pageNum === 1) {
-        setMoviesData(response.data.results);
+        setTvData(response.data.results);
       } else {
-        setMoviesData((prev) => [...prev, ...response.data.results]);
+        setTvData((prev) => [...prev, ...response.data.results]);
       }
 
       setHasMore(pageNum < response.data.total_pages);
     } catch (err) {
-      console.error("Error fetching popular movies:", err);
-      setError("Impossible de charger les films. Veuillez réessayer.");
+      console.error("Error fetching popular TV shows:", err);
+      setError("Impossible de charger les séries. Veuillez réessayer.");
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const fetchMovies = useCallback(async (searchTerm, pageNum = 1) => {
+  const fetchTV = useCallback(async (searchTerm, pageNum = 1) => {
     if (!searchTerm.trim()) {
-      // Si la recherche est vide, charger les films populaires
-      fetchPopularMovies(pageNum);
+      fetchPopularTV(pageNum);
       return;
     }
 
     setLoading(true);
     setError(null);
 
-    // Valeurs par défaut si les variables d'environnement ne sont pas chargées
     const API_KEY = process.env.REACT_APP_TMDB_API_KEY || 'ed82f4c18f2964e75117c2dc65e2161d';
     const BASE_URL = process.env.REACT_APP_TMDB_BASE_URL || 'https://api.themoviedb.org/3';
 
     try {
       const response = await axios.get(
-        `${BASE_URL}/search/movie`,
+        `${BASE_URL}/search/tv`,
         {
           params: {
             api_key: API_KEY,
@@ -83,46 +80,45 @@ const Form = () => {
       );
 
       if (pageNum === 1) {
-        setMoviesData(response.data.results);
+        setTvData(response.data.results);
       } else {
-        setMoviesData((prev) => [...prev, ...response.data.results]);
+        setTvData((prev) => [...prev, ...response.data.results]);
       }
 
       setHasMore(pageNum < response.data.total_pages);
     } catch (err) {
-      console.error("Error fetching movies:", err);
-      setError("Impossible de charger les films. Veuillez réessayer.");
+      console.error("Error fetching TV shows:", err);
+      setError("Impossible de charger les séries. Veuillez réessayer.");
     } finally {
       setLoading(false);
     }
-  }, [fetchPopularMovies]);
+  }, [fetchPopularTV]);
 
-  // Charger les films populaires au montage du composant
   useEffect(() => {
-    fetchPopularMovies(1);
-  }, [fetchPopularMovies]);
+    fetchPopularTV(1);
+  }, [fetchPopularTV]);
 
   useEffect(() => {
     setPage(1);
-    fetchMovies(debouncedSearch, 1);
-  }, [debouncedSearch, fetchMovies]);
+    fetchTV(debouncedSearch, 1);
+  }, [debouncedSearch, fetchTV]);
 
   const loadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
     if (debouncedSearch.trim()) {
-      fetchMovies(debouncedSearch, nextPage);
+      fetchTV(debouncedSearch, nextPage);
     } else {
-      fetchPopularMovies(nextPage);
+      fetchPopularTV(nextPage);
     }
   };
 
-  const filteredMovies = moviesData
-    .filter((movie) => {
-      if (selectedGenre && !movie.genre_ids.includes(selectedGenre)) {
+  const filteredTV = tvData
+    .filter((show) => {
+      if (selectedGenre && !show.genre_ids.includes(selectedGenre)) {
         return false;
       }
-      if (movie.vote_average < minRating) {
+      if (show.vote_average < minRating) {
         return false;
       }
       return true;
@@ -146,11 +142,11 @@ const Form = () => {
         <form onSubmit={handleSubmit}>
           <input
             type="text"
-            placeholder="Entrez le titre d'un film"
+            placeholder="Rechercher une série..."
             id="search-input"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            aria-label="Rechercher un film"
+            aria-label="Rechercher une série"
           />
         </form>
 
@@ -198,27 +194,27 @@ const Form = () => {
       {error && (
         <ErrorMessage
           message={error}
-          onRetry={() => fetchMovies(debouncedSearch, 1)}
+          onRetry={() => fetchTV(debouncedSearch, 1)}
         />
       )}
 
       {loading && page === 1 ? (
         <Loading />
-      ) : filteredMovies.length === 0 && !loading ? (
+      ) : filteredTV.length === 0 && !loading && search.trim() !== "" ? (
         <EmptyState
           icon="🔍"
-          title="Aucun film trouvé"
+          title="Aucune série trouvée"
           message="Essayez une autre recherche ou modifiez vos filtres"
         />
       ) : (
         <>
           <div className="result">
-            {filteredMovies.map((movie) => (
-              <Card movie={movie} key={movie.id} />
+            {filteredTV.map((show) => (
+              <TVCard show={show} key={show.id} />
             ))}
           </div>
 
-          {hasMore && filteredMovies.length > 0 && (
+          {hasMore && filteredTV.length > 0 && (
             <div className="load-more-container">
               <button
                 className="btn-load-more"
@@ -235,4 +231,4 @@ const Form = () => {
   );
 };
 
-export default Form;
+export default TVForm;

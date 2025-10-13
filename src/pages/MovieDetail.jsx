@@ -4,6 +4,7 @@ import axios from "axios";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
+import WatchProviders from "../components/WatchProviders";
 import { useFavorites } from "../contexts/FavoritesContext";
 
 const MovieDetail = () => {
@@ -13,6 +14,8 @@ const MovieDetail = () => {
   const [credits, setCredits] = useState(null);
   const [videos, setVideos] = useState([]);
   const [similar, setSimilar] = useState([]);
+  const [watchProviders, setWatchProviders] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -22,19 +25,29 @@ const MovieDetail = () => {
       setLoading(true);
       setError(null);
 
+      // Valeurs par défaut
+      const API_KEY = process.env.REACT_APP_TMDB_API_KEY || 'ed82f4c18f2964e75117c2dc65e2161d';
+      const BASE_URL = process.env.REACT_APP_TMDB_BASE_URL || 'https://api.themoviedb.org/3';
+
       try {
-        const [movieRes, creditsRes, videosRes, similarRes] = await Promise.all([
+        const [movieRes, creditsRes, videosRes, similarRes, providersRes, reviewsRes] = await Promise.all([
           axios.get(
-            `${process.env.REACT_APP_TMDB_BASE_URL}/movie/${id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=fr-FR`
+            `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=fr-FR`
           ),
           axios.get(
-            `${process.env.REACT_APP_TMDB_BASE_URL}/movie/${id}/credits?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=fr-FR`
+            `${BASE_URL}/movie/${id}/credits?api_key=${API_KEY}&language=fr-FR`
           ),
           axios.get(
-            `${process.env.REACT_APP_TMDB_BASE_URL}/movie/${id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=fr-FR`
+            `${BASE_URL}/movie/${id}/videos?api_key=${API_KEY}&language=fr-FR`
           ),
           axios.get(
-            `${process.env.REACT_APP_TMDB_BASE_URL}/movie/${id}/similar?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=fr-FR`
+            `${BASE_URL}/movie/${id}/similar?api_key=${API_KEY}&language=fr-FR`
+          ),
+          axios.get(
+            `${BASE_URL}/movie/${id}/watch/providers?api_key=${API_KEY}`
+          ),
+          axios.get(
+            `${BASE_URL}/movie/${id}/reviews?api_key=${API_KEY}&language=fr-FR`
           ),
         ]);
 
@@ -42,6 +55,8 @@ const MovieDetail = () => {
         setCredits(creditsRes.data);
         setVideos(videosRes.data.results);
         setSimilar(similarRes.data.results.slice(0, 6));
+        setWatchProviders(providersRes.data.results.FR || null);
+        setReviews(reviewsRes.data.results.slice(0, 3));
       } catch (err) {
         console.error("Error fetching movie details:", err);
         setError("Impossible de charger les détails du film.");
@@ -74,11 +89,12 @@ const MovieDetail = () => {
 
   return (
     <div className="movie-detail-page">
-      <Header />
-      
-      <button className="btn-back" onClick={() => navigate(-1)}>
-        ← Retour
-      </button>
+      <div className="movie-detail-header">
+        <button className="btn-back" onClick={() => navigate(-1)}>
+          ← Retour
+        </button>
+        <Header hideFullHeader={true} />
+      </div>
 
       <div className="movie-detail-container">
         <div className="movie-backdrop">
@@ -137,12 +153,42 @@ const MovieDetail = () => {
               <p>{movie.overview || "Pas de synopsis disponible"}</p>
             </div>
 
+            <WatchProviders providers={watchProviders} />
+
+            {reviews.length > 0 && (
+              <div className="reviews">
+                <h2>Avis des utilisateurs</h2>
+                {reviews.map((review) => (
+                  <div key={review.id} className="review-item">
+                    <div className="review-header">
+                      <strong>{review.author}</strong>
+                      {review.author_details.rating && (
+                        <span className="review-rating">
+                          ⭐ {review.author_details.rating}/10
+                        </span>
+                      )}
+                    </div>
+                    <p className="review-content">
+                      {review.content.length > 300
+                        ? review.content.substring(0, 300) + "..."
+                        : review.content}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {credits && credits.cast.length > 0 && (
               <div className="cast">
                 <h2>Casting principal</h2>
                 <div className="cast-list">
                   {credits.cast.slice(0, 6).map((actor) => (
-                    <div key={actor.id} className="cast-member">
+                    <div 
+                      key={actor.id} 
+                      className="cast-member"
+                      onClick={() => navigate(`/person/${actor.id}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
                       {actor.profile_path ? (
                         <img
                           src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
