@@ -1,6 +1,6 @@
 @font-face {
   font-family: "font-1";
-  src: url(../assets/fonts/Dongle-Light.ttf);
+  src: url(../assets/fonts/Mulish-VariableFont_wght.ttf);
 }
 
 @font-face {
@@ -8,8 +8,8 @@
   src: url(../assets/fonts/Dongle-Light.ttf);
 }
 
-$font-1: "font-1", sans-serif;
-$font-2: "font-2", sans-serif;
+$font-1: "font-1", sans-serif; // Roboto Regular pour les titres
+$font-2: "font-2", sans-serif; // Roboto Light pour le texte
 
 // Dark theme colors
 $color-1-dark: #546fe4;

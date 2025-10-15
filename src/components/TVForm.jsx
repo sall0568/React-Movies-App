@@ -5,7 +5,6 @@ import TVCard from "./TVCard";
 import Loading from "./Loading";
 import ErrorMessage from "./ErrorMessage";
 import EmptyState from "./EmptyState";
-import GenreFilter from "./GenreFilter";
 
 const TVForm = () => {
   const [tvData, setTvData] = useState([]);
@@ -13,7 +12,6 @@ const TVForm = () => {
   const [sortGoodBad, setSortGoodBad] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [selectedGenre, setSelectedGenre] = useState(null);
   const [minRating, setMinRating] = useState(0);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -115,9 +113,6 @@ const TVForm = () => {
 
   const filteredTV = tvData
     .filter((show) => {
-      if (selectedGenre && !show.genre_ids.includes(selectedGenre)) {
-        return false;
-      }
       if (show.vote_average < minRating) {
         return false;
       }
@@ -170,16 +165,11 @@ const TVForm = () => {
             </button>
           </div>
 
-          <GenreFilter
-            selectedGenre={selectedGenre}
-            onGenreChange={setSelectedGenre}
-          />
-
           <div className="rating-filter">
-            <label htmlFor="min-rating">Note min : {minRating}</label>
+            <label htmlFor="min-rating-tv">Note min : {minRating}</label>
             <input
               type="range"
-              id="min-rating"
+              id="min-rating-tv"
               min="0"
               max="10"
               step="0.5"

@@ -62,8 +62,24 @@ const PersonDetail = () => {
     return age;
   };
 
-  if (loading) return <><Header hideFullHeader={true} /><Loading /></>;
-  if (error) return <><Header hideFullHeader={true} /><ErrorMessage message={error} /></>;
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <Loading />
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Header />
+        <ErrorMessage message={error} />
+      </>
+    );
+  }
+
   if (!person) return null;
 
   const age = calculateAge(person.birthday, person.deathday);
@@ -74,12 +90,11 @@ const PersonDetail = () => {
 
   return (
     <div className="person-detail-page">
-      <div className="person-detail-header">
-        <button className="btn-back" onClick={() => navigate(-1)}>
-          ← Retour
-        </button>
-        <Header hideFullHeader={true} />
-      </div>
+      <Header />
+      
+      <button className="btn-back-fixed" onClick={() => navigate(-1)}>
+        ← Retour
+      </button>
 
       <div className="person-detail-container">
         <div className="person-content">

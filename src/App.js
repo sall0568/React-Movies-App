@@ -10,6 +10,8 @@ const LikePage = lazy(() => import("./pages/LikePage"));
 const MovieDetail = lazy(() => import("./pages/MovieDetail"));
 const PersonDetail = lazy(() => import("./pages/PersonDetail"));
 const TVShows = lazy(() => import("./pages/TVShows"));
+const TVDetail = lazy(() => import("./pages/TVDetail"));
+const SeasonDetail = lazy(() => import("./pages/SeasonDetail"));
 
 const AppContent = () => {
   const { theme } = useTheme();
@@ -20,10 +22,15 @@ const AppContent = () => {
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/series" element={<TVShows />} />
             <Route path="/coups-de-coeur" element={<LikePage />} />
             <Route path="/movie/:id" element={<MovieDetail />} />
+            <Route
+              path="/tv/:tvId/season/:seasonNumber"
+              element={<SeasonDetail />}
+            />
+            <Route path="/tv/:id" element={<TVDetail />} />
             <Route path="/person/:id" element={<PersonDetail />} />
-            <Route path="/tv-shows" element={<TVShows />} />
             <Route path="*" element={<Home />} />
           </Routes>
         </Suspense>

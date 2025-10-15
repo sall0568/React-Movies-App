@@ -1,0 +1,89 @@
+// Réutilisation des styles de MovieDetail avec préfixe tv-
+.networks {
+    margin-bottom: 20px;
+    // ... styles
+}
+
+
+.tv-detail-page {
+    @extend .movie-detail-page;
+
+    .tv-detail-container {
+        @extend .movie-detail-container;
+    }
+
+    .tv-backdrop {
+        @extend .movie-backdrop;
+    }
+
+    .tv-content {
+        @extend .movie-content;
+    }
+
+    .tv-poster {
+        @extend .movie-poster;
+    }
+
+    .tv-info {
+        @extend .movie-info;
+    }
+
+    .tv-meta {
+        @extend .movie-meta;
+    }
+
+    .creators {
+        margin-bottom: 40px;
+
+        h2 {
+            font-size: 2rem;
+            color: var(--color-text);
+            margin-bottom: 20px;
+        }
+
+        .creators-list {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+
+            .creator-item {
+                text-align: center;
+                cursor: pointer;
+                transition: transform 0.3s ease;
+
+                &:hover {
+                    transform: translateY(-5px);
+                }
+
+                img,
+                .no-photo {
+                    width: 100px;
+                    height: 100px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    margin: 0 auto 10px;
+                    display: block;
+                    border: 2px solid var(--color-border);
+                }
+
+                .no-photo {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: var(--color-card-bg);
+                    font-size: 2rem;
+                }
+
+                p {
+                    font-size: 1.1rem;
+                    color: var(--color-text);
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+
+    .similar-shows {
+        @extend .similar-movies;
+    }
+}

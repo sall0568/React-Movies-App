@@ -25,7 +25,6 @@ const MovieDetail = () => {
       setLoading(true);
       setError(null);
 
-      // Valeurs par défaut
       const API_KEY = process.env.REACT_APP_TMDB_API_KEY || 'ed82f4c18f2964e75117c2dc65e2161d';
       const BASE_URL = process.env.REACT_APP_TMDB_BASE_URL || 'https://api.themoviedb.org/3';
 
@@ -80,8 +79,24 @@ const MovieDetail = () => {
     return `${hours}h ${mins}min`;
   };
 
-  if (loading) return <><Header /><Loading /></>;
-  if (error) return <><Header /><ErrorMessage message={error} onRetry={() => window.location.reload()} /></>;
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <Loading />
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Header />
+        <ErrorMessage message={error} onRetry={() => window.location.reload()} />
+      </>
+    );
+  }
+
   if (!movie) return null;
 
   const trailer = videos.find(video => video.type === "Trailer" && video.site === "YouTube");
@@ -89,18 +104,17 @@ const MovieDetail = () => {
 
   return (
     <div className="movie-detail-page">
-      <div className="movie-detail-header">
-        <button className="btn-back" onClick={() => navigate(-1)}>
-          ← Retour
-        </button>
-        <Header hideFullHeader={true} />
-      </div>
+      <Header />
+      
+      <button className="btn-back-fixed" onClick={() => navigate(-1)}>
+        ← Retour
+      </button>
 
       <div className="movie-detail-container">
         <div className="movie-backdrop">
           {movie.backdrop_path && (
             <img
-              src={`${process.env.REACT_APP_TMDB_IMAGE_BASE_URL}${movie.backdrop_path}`}
+              src={`${process.env.REACT_APP_TMDB_IMAGE_BASE_URL || 'https://image.tmdb.org/t/p/original'}${movie.backdrop_path}`}
               alt={movie.title}
             />
           )}
@@ -112,7 +126,7 @@ const MovieDetail = () => {
             <img
               src={
                 movie.poster_path
-                  ? `${process.env.REACT_APP_TMDB_IMAGE_BASE_URL}${movie.poster_path}`
+                  ? `${process.env.REACT_APP_TMDB_IMAGE_BASE_URL || 'https://image.tmdb.org/t/p/original'}${movie.poster_path}`
                   : "./img/poster.jpg"
               }
               alt={movie.title}
@@ -251,4 +265,4 @@ const MovieDetail = () => {
   );
 };
 
-export default MovieDetail
+export default MovieDetail;
