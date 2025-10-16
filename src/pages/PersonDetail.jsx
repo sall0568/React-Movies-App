@@ -18,8 +18,11 @@ const PersonDetail = () => {
       setLoading(true);
       setError(null);
 
-      const API_KEY = process.env.REACT_APP_TMDB_API_KEY || 'ed82f4c18f2964e75117c2dc65e2161d';
-      const BASE_URL = process.env.REACT_APP_TMDB_BASE_URL || 'https://api.themoviedb.org/3';
+      const API_KEY =
+        process.env.REACT_APP_TMDB_API_KEY ||
+        "5646ea2cef2a3d04dc2fbfc47c6c23f0";
+      const BASE_URL =
+        process.env.REACT_APP_TMDB_BASE_URL || "https://api.themoviedb.org/3";
 
       try {
         const [personRes, creditsRes] = await Promise.all([
@@ -83,15 +86,16 @@ const PersonDetail = () => {
   if (!person) return null;
 
   const age = calculateAge(person.birthday, person.deathday);
-  const sortedMovies = credits?.cast
-    ?.filter(movie => movie.poster_path)
-    .sort((a, b) => b.popularity - a.popularity)
-    .slice(0, 20) || [];
+  const sortedMovies =
+    credits?.cast
+      ?.filter((movie) => movie.poster_path)
+      .sort((a, b) => b.popularity - a.popularity)
+      .slice(0, 20) || [];
 
   return (
     <div className="person-detail-page">
       <Header />
-      
+
       <button className="btn-back-fixed" onClick={() => navigate(-1)}>
         ← Retour
       </button>
@@ -112,11 +116,13 @@ const PersonDetail = () => {
 
             <div className="person-info-sidebar">
               <h3>Informations personnelles</h3>
-              
+
               {person.birthday && (
                 <div className="info-item">
                   <strong>Naissance</strong>
-                  <p>{formatDate(person.birthday)} {age && `(${age} ans)`}</p>
+                  <p>
+                    {formatDate(person.birthday)} {age && `(${age} ans)`}
+                  </p>
                 </div>
               )}
 
@@ -137,7 +143,11 @@ const PersonDetail = () => {
               {person.known_for_department && (
                 <div className="info-item">
                   <strong>Connu pour</strong>
-                  <p>{person.known_for_department === "Acting" ? "Acteur/Actrice" : person.known_for_department}</p>
+                  <p>
+                    {person.known_for_department === "Acting"
+                      ? "Acteur/Actrice"
+                      : person.known_for_department}
+                  </p>
                 </div>
               )}
             </div>

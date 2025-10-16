@@ -25,20 +25,19 @@ const Form = () => {
     setLoading(true);
     setError(null);
 
-    const API_KEY = process.env.REACT_APP_TMDB_API_KEY || 'ed82f4c18f2964e75117c2dc65e2161d';
-    const BASE_URL = process.env.REACT_APP_TMDB_BASE_URL || 'https://api.themoviedb.org/3';
+    const API_KEY =
+      process.env.REACT_APP_TMDB_API_KEY || "5646ea2cef2a3d04dc2fbfc47c6c23f0";
+    const BASE_URL =
+      process.env.REACT_APP_TMDB_BASE_URL || "https://api.themoviedb.org/3";
 
     try {
-      const response = await axios.get(
-        `${BASE_URL}/movie/now_playing`,
-        {
-          params: {
-            api_key: API_KEY,
-            language: "fr-FR",
-            page: pageNum,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/movie/now_playing`, {
+        params: {
+          api_key: API_KEY,
+          language: "fr-FR",
+          page: pageNum,
+        },
+      });
 
       if (pageNum === 1) {
         setMoviesData(response.data.results);
@@ -55,47 +54,50 @@ const Form = () => {
     }
   }, []);
 
-  const fetchMovies = useCallback(async (searchTerm, pageNum = 1) => {
-    if (!searchTerm.trim()) {
-      // Si la recherche est vide, charger les films populaires
-      fetchPopularMovies(pageNum);
-      return;
-    }
+  const fetchMovies = useCallback(
+    async (searchTerm, pageNum = 1) => {
+      if (!searchTerm.trim()) {
+        // Si la recherche est vide, charger les films populaires
+        fetchPopularMovies(pageNum);
+        return;
+      }
 
-    setLoading(true);
-    setError(null);
+      setLoading(true);
+      setError(null);
 
-    // Valeurs par défaut si les variables d'environnement ne sont pas chargées
-    const API_KEY = process.env.REACT_APP_TMDB_API_KEY || 'ed82f4c18f2964e75117c2dc65e2161d';
-    const BASE_URL = process.env.REACT_APP_TMDB_BASE_URL || 'https://api.themoviedb.org/3';
+      // Valeurs par défaut si les variables d'environnement ne sont pas chargées
+      const API_KEY =
+        process.env.REACT_APP_TMDB_API_KEY ||
+        "ed82f4c18f2964e75117c2dc65e2161d";
+      const BASE_URL =
+        process.env.REACT_APP_TMDB_BASE_URL || "https://api.themoviedb.org/3";
 
-    try {
-      const response = await axios.get(
-        `${BASE_URL}/search/movie`,
-        {
+      try {
+        const response = await axios.get(`${BASE_URL}/search/movie`, {
           params: {
             api_key: API_KEY,
             query: searchTerm,
             language: "fr-FR",
             page: pageNum,
           },
+        });
+
+        if (pageNum === 1) {
+          setMoviesData(response.data.results);
+        } else {
+          setMoviesData((prev) => [...prev, ...response.data.results]);
         }
-      );
 
-      if (pageNum === 1) {
-        setMoviesData(response.data.results);
-      } else {
-        setMoviesData((prev) => [...prev, ...response.data.results]);
+        setHasMore(pageNum < response.data.total_pages);
+      } catch (err) {
+        console.error("Error fetching movies:", err);
+        setError("Impossible de charger les films. Veuillez réessayer.");
+      } finally {
+        setLoading(false);
       }
-
-      setHasMore(pageNum < response.data.total_pages);
-    } catch (err) {
-      console.error("Error fetching movies:", err);
-      setError("Impossible de charger les films. Veuillez réessayer.");
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchPopularMovies]);
+    },
+    [fetchPopularMovies]
+  );
 
   // Charger les films populaires au montage du composant
   useEffect(() => {
@@ -157,7 +159,9 @@ const Form = () => {
         <div className="filters-container">
           <div className="btn-sort-container">
             <button
-              className={`btn-sort ${sortGoodBad === "goodToBad" ? "active" : ""}`}
+              className={`btn-sort ${
+                sortGoodBad === "goodToBad" ? "active" : ""
+              }`}
               id="goodToBad"
               onClick={() => setSortGoodBad("goodToBad")}
               aria-label="Trier du meilleur au pire"
@@ -165,7 +169,9 @@ const Form = () => {
               Top<span>➜</span>
             </button>
             <button
-              className={`btn-sort ${sortGoodBad === "badToGood" ? "active" : ""}`}
+              className={`btn-sort ${
+                sortGoodBad === "badToGood" ? "active" : ""
+              }`}
               id="badToGood"
               onClick={() => setSortGoodBad("badToGood")}
               aria-label="Trier du pire au meilleur"

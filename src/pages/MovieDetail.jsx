@@ -27,7 +27,7 @@ const MovieDetail = () => {
 
       const API_KEY =
         process.env.REACT_APP_TMDB_API_KEY ||
-        "ed82f4c18f2964e75117c2dc65e2161d";
+        "5646ea2cef2a3d04dc2fbfc47c6c23f0";
       const BASE_URL =
         process.env.REACT_APP_TMDB_BASE_URL || "https://api.themoviedb.org/3";
 
