@@ -1,6 +1,7 @@
-import axios from "axios";
+// src/components/Form.jsx - VERSION MISE À JOUR
 import React, { useState, useEffect, useCallback } from "react";
 import { useDebounce } from "../hooks/useDebounce";
+import { movieAPI } from "../services/api"; // 👈 Import du service API
 import Card from "./Card";
 import Loading from "./Loading";
 import ErrorMessage from "./ErrorMessage";
@@ -20,44 +21,36 @@ const Form = () => {
 
   const debouncedSearch = useDebounce(search, 500);
 
-  // Fonction pour charger les films populaires/récents
+  // ✅ Fonction pour charger les films populaires
   const fetchPopularMovies = useCallback(async (pageNum = 1) => {
     setLoading(true);
     setError(null);
 
-    const API_KEY =
-      process.env.REACT_APP_TMDB_API_KEY || "5646ea2cef2a3d04dc2fbfc47c6c23f0";
-    const BASE_URL =
-      process.env.REACT_APP_TMDB_BASE_URL || "https://api.themoviedb.org/3";
-
     try {
-      const response = await axios.get(`${BASE_URL}/movie/now_playing`, {
-        params: {
-          api_key: API_KEY,
-          language: "fr-FR",
-          page: pageNum,
-        },
-      });
+      // 👇 Utilisation du service API au lieu d'axios direct
+      const data = await movieAPI.getPopular(pageNum);
 
       if (pageNum === 1) {
-        setMoviesData(response.data.results);
+        setMoviesData(data.results);
       } else {
-        setMoviesData((prev) => [...prev, ...response.data.results]);
+        setMoviesData((prev) => [...prev, ...data.results]);
       }
 
-      setHasMore(pageNum < response.data.total_pages);
+      setHasMore(pageNum < data.total_pages);
     } catch (err) {
       console.error("Error fetching popular movies:", err);
-      setError("Impossible de charger les films. Veuillez réessayer.");
+      setError(
+        err.message || "Impossible de charger les films. Veuillez réessayer."
+      );
     } finally {
       setLoading(false);
     }
   }, []);
 
+  // ✅ Fonction pour rechercher des films
   const fetchMovies = useCallback(
     async (searchTerm, pageNum = 1) => {
       if (!searchTerm.trim()) {
-        // Si la recherche est vide, charger les films populaires
         fetchPopularMovies(pageNum);
         return;
       }
@@ -65,33 +58,22 @@ const Form = () => {
       setLoading(true);
       setError(null);
 
-      // Valeurs par défaut si les variables d'environnement ne sont pas chargées
-      const API_KEY =
-        process.env.REACT_APP_TMDB_API_KEY ||
-        "ed82f4c18f2964e75117c2dc65e2161d";
-      const BASE_URL =
-        process.env.REACT_APP_TMDB_BASE_URL || "https://api.themoviedb.org/3";
-
       try {
-        const response = await axios.get(`${BASE_URL}/search/movie`, {
-          params: {
-            api_key: API_KEY,
-            query: searchTerm,
-            language: "fr-FR",
-            page: pageNum,
-          },
-        });
+        // 👇 Utilisation du service API
+        const data = await movieAPI.search(searchTerm, pageNum);
 
         if (pageNum === 1) {
-          setMoviesData(response.data.results);
+          setMoviesData(data.results);
         } else {
-          setMoviesData((prev) => [...prev, ...response.data.results]);
+          setMoviesData((prev) => [...prev, ...data.results]);
         }
 
-        setHasMore(pageNum < response.data.total_pages);
+        setHasMore(pageNum < data.total_pages);
       } catch (err) {
         console.error("Error fetching movies:", err);
-        setError("Impossible de charger les films. Veuillez réessayer.");
+        setError(
+          err.message || "Impossible de charger les films. Veuillez réessayer."
+        );
       } finally {
         setLoading(false);
       }
@@ -99,7 +81,7 @@ const Form = () => {
     [fetchPopularMovies]
   );
 
-  // Charger les films populaires au montage du composant
+  // Charger les films populaires au montage
   useEffect(() => {
     fetchPopularMovies(1);
   }, [fetchPopularMovies]);
@@ -121,7 +103,7 @@ const Form = () => {
 
   const filteredMovies = moviesData
     .filter((movie) => {
-      if (selectedGenre && !movie.genre_ids.includes(selectedGenre)) {
+      if (selectedGenre && !movie.genre_ids?.includes(selectedGenre)) {
         return false;
       }
       if (movie.vote_average < minRating) {
