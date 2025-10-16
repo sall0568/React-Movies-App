@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useFavorites } from "../contexts/FavoritesContext";
 
 const TVCard = ({ show }) => {
+  const { isTVFavorite, toggleTVFavorite } = useFavorites();
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
@@ -42,8 +44,18 @@ const TVCard = ({ show }) => {
   };
 
   const posterUrl = show.poster_path
-    ? `${process.env.REACT_APP_TMDB_IMAGE_BASE_URL || 'https://image.tmdb.org/t/p/original'}${show.poster_path}`
+    ? `${
+        process.env.REACT_APP_TMDB_IMAGE_BASE_URL ||
+        "https://image.tmdb.org/t/p/original"
+      }${show.poster_path}`
     : "./img/poster.jpg";
+
+  const isFav = isTVFavorite(show.id);
+
+  const handleToggleFavorite = (e) => {
+    e.preventDefault();
+    toggleTVFavorite(show.id);
+  };
 
   return (
     <div className="card">
@@ -77,6 +89,22 @@ const TVCard = ({ show }) => {
         {show.overview && <h3>Synopsis</h3>}
         <p>{show.overview || "Pas de synopsis disponible"}</p>
       </Link>
+
+      <button
+        className={`btn ${isFav ? "btn-remove" : "btn-add"}`}
+        onClick={handleToggleFavorite}
+        aria-label={isFav ? "Retirer des favoris" : "Ajouter aux favoris"}
+      >
+        {isFav ? (
+          <>
+            <span>💔</span> Retirer des favoris
+          </>
+        ) : (
+          <>
+            <span>💖</span> Ajouter aux favoris
+          </>
+        )}
+      </button>
     </div>
   );
 };

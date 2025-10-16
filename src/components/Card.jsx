@@ -3,7 +3,7 @@ import { useFavorites } from "../contexts/FavoritesContext";
 import { Link } from "react-router-dom";
 
 const Card = ({ movie }) => {
-  const { isFavorite, toggleFavorite } = useFavorites();
+  const { isMovieFavorite, toggleMovieFavorite } = useFavorites();
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
@@ -48,14 +48,17 @@ const Card = ({ movie }) => {
 
   const handleToggleFavorite = (e) => {
     e.preventDefault();
-    toggleFavorite(movie.id);
+    toggleMovieFavorite(movie.id);
   };
 
   const posterUrl = movie.poster_path
-    ? `${process.env.REACT_APP_TMDB_IMAGE_BASE_URL}${movie.poster_path}`
+    ? `${
+        process.env.REACT_APP_TMDB_IMAGE_BASE_URL ||
+        "https://image.tmdb.org/t/p/original"
+      }${movie.poster_path}`
     : "./img/poster.jpg";
 
-  const isFav = isFavorite(movie.id);
+  const isFav = isMovieFavorite(movie.id);
 
   return (
     <div className="card">

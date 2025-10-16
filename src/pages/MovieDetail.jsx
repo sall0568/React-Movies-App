@@ -18,18 +18,28 @@ const MovieDetail = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { isFavorite, toggleFavorite } = useFavorites();
+  const { isMovieFavorite, toggleMovieFavorite } = useFavorites();
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
       setLoading(true);
       setError(null);
 
-      const API_KEY = process.env.REACT_APP_TMDB_API_KEY || 'ed82f4c18f2964e75117c2dc65e2161d';
-      const BASE_URL = process.env.REACT_APP_TMDB_BASE_URL || 'https://api.themoviedb.org/3';
+      const API_KEY =
+        process.env.REACT_APP_TMDB_API_KEY ||
+        "ed82f4c18f2964e75117c2dc65e2161d";
+      const BASE_URL =
+        process.env.REACT_APP_TMDB_BASE_URL || "https://api.themoviedb.org/3";
 
       try {
-        const [movieRes, creditsRes, videosRes, similarRes, providersRes, reviewsRes] = await Promise.all([
+        const [
+          movieRes,
+          creditsRes,
+          videosRes,
+          similarRes,
+          providersRes,
+          reviewsRes,
+        ] = await Promise.all([
           axios.get(
             `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=fr-FR`
           ),
@@ -92,20 +102,25 @@ const MovieDetail = () => {
     return (
       <>
         <Header />
-        <ErrorMessage message={error} onRetry={() => window.location.reload()} />
+        <ErrorMessage
+          message={error}
+          onRetry={() => window.location.reload()}
+        />
       </>
     );
   }
 
   if (!movie) return null;
 
-  const trailer = videos.find(video => video.type === "Trailer" && video.site === "YouTube");
-  const isFav = isFavorite(movie.id);
+  const trailer = videos.find(
+    (video) => video.type === "Trailer" && video.site === "YouTube"
+  );
+  const isFav = isMovieFavorite(movie.id);
 
   return (
     <div className="movie-detail-page">
       <Header />
-      
+
       <button className="btn-back-fixed" onClick={() => navigate(-1)}>
         ← Retour
       </button>
@@ -114,7 +129,10 @@ const MovieDetail = () => {
         <div className="movie-backdrop">
           {movie.backdrop_path && (
             <img
-              src={`${process.env.REACT_APP_TMDB_IMAGE_BASE_URL || 'https://image.tmdb.org/t/p/original'}${movie.backdrop_path}`}
+              src={`${
+                process.env.REACT_APP_TMDB_IMAGE_BASE_URL ||
+                "https://image.tmdb.org/t/p/original"
+              }${movie.backdrop_path}`}
               alt={movie.title}
             />
           )}
@@ -126,7 +144,10 @@ const MovieDetail = () => {
             <img
               src={
                 movie.poster_path
-                  ? `${process.env.REACT_APP_TMDB_IMAGE_BASE_URL || 'https://image.tmdb.org/t/p/original'}${movie.poster_path}`
+                  ? `${
+                      process.env.REACT_APP_TMDB_IMAGE_BASE_URL ||
+                      "https://image.tmdb.org/t/p/original"
+                    }${movie.poster_path}`
                   : "./img/poster.jpg"
               }
               alt={movie.title}
@@ -157,7 +178,7 @@ const MovieDetail = () => {
 
             <button
               className={`btn-favorite ${isFav ? "active" : ""}`}
-              onClick={() => toggleFavorite(movie.id)}
+              onClick={() => toggleMovieFavorite(movie.id)}
             >
               {isFav ? "💔 Retirer des favoris" : "💖 Ajouter aux favoris"}
             </button>
@@ -197,11 +218,11 @@ const MovieDetail = () => {
                 <h2>Casting principal</h2>
                 <div className="cast-list">
                   {credits.cast.slice(0, 6).map((actor) => (
-                    <div 
-                      key={actor.id} 
+                    <div
+                      key={actor.id}
                       className="cast-member"
                       onClick={() => navigate(`/person/${actor.id}`)}
-                      style={{ cursor: 'pointer' }}
+                      style={{ cursor: "pointer" }}
                     >
                       {actor.profile_path ? (
                         <img

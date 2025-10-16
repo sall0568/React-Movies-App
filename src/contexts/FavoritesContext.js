@@ -13,67 +13,149 @@ export const useFavorites = () => {
 };
 
 export const FavoritesProvider = ({ children }) => {
-  const [favoriteIds, setFavoriteIds] = useLocalStorage("movieFavorites", []);
+  // Favoris films
+  const [favoriteMovieIds, setFavoriteMovieIds] = useLocalStorage(
+    "movieFavorites",
+    []
+  );
   const [favoriteMovies, setFavoriteMovies] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loadingMovies, setLoadingMovies] = useState(false);
+
+  // Favoris séries
+  const [favoriteTVIds, setFavoriteTVIds] = useLocalStorage("tvFavorites", []);
+  const [favoriteTVShows, setFavoriteTVShows] = useState([]);
+  const [loadingTV, setLoadingTV] = useState(false);
+
+  const API_KEY =
+    process.env.REACT_APP_TMDB_API_KEY || "ed82f4c18f2964e75117c2dc65e2161d";
+  const BASE_URL =
+    process.env.REACT_APP_TMDB_BASE_URL || "https://api.themoviedb.org/3";
 
   // Charger les détails des films favoris
   useEffect(() => {
-    const fetchFavorites = async () => {
-      if (favoriteIds.length === 0) {
+    const fetchFavoriteMovies = async () => {
+      if (favoriteMovieIds.length === 0) {
         setFavoriteMovies([]);
         return;
       }
 
-      setLoading(true);
+      setLoadingMovies(true);
+
       try {
-        const promises = favoriteIds.map((id) =>
-          axios.get(
-            `${process.env.REACT_APP_TMDB_BASE_URL}/movie/${id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=fr-FR`
-          )
+        const promises = favoriteMovieIds.map((id) =>
+          axios.get(`${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=fr-FR`)
         );
         const responses = await Promise.all(promises);
         setFavoriteMovies(responses.map((res) => res.data));
       } catch (error) {
-        console.error("Error fetching favorites:", error);
+        console.error("Error fetching favorite movies:", error);
       } finally {
-        setLoading(false);
+        setLoadingMovies(false);
       }
     };
 
-    fetchFavorites();
-  }, [favoriteIds]);
+    fetchFavoriteMovies();
+  }, [favoriteMovieIds, API_KEY, BASE_URL]);
 
-  const addFavorite = (movieId) => {
-    if (!favoriteIds.includes(movieId)) {
-      setFavoriteIds([...favoriteIds, movieId]);
+  // Charger les détails des séries favorites
+  useEffect(() => {
+    const fetchFavoriteTVShows = async () => {
+      if (favoriteTVIds.length === 0) {
+        setFavoriteTVShows([]);
+        return;
+      }
+
+      setLoadingTV(true);
+
+      try {
+        const promises = favoriteTVIds.map((id) =>
+          axios.get(`${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=fr-FR`)
+        );
+        const responses = await Promise.all(promises);
+        setFavoriteTVShows(responses.map((res) => res.data));
+      } catch (error) {
+        console.error("Error fetching favorite TV shows:", error);
+      } finally {
+        setLoadingTV(false);
+      }
+    };
+
+    fetchFavoriteTVShows();
+  }, [favoriteTVIds, API_KEY, BASE_URL]);
+
+  // Fonctions pour les films
+  const addMovieFavorite = (movieId) => {
+    if (!favoriteMovieIds.includes(movieId)) {
+      setFavoriteMovieIds([...favoriteMovieIds, movieId]);
     }
   };
 
-  const removeFavorite = (movieId) => {
-    setFavoriteIds(favoriteIds.filter((id) => id !== movieId));
+  const removeMovieFavorite = (movieId) => {
+    setFavoriteMovieIds(favoriteMovieIds.filter((id) => id !== movieId));
   };
 
-  const isFavorite = (movieId) => {
-    return favoriteIds.includes(movieId);
+  const isMovieFavorite = (movieId) => {
+    return favoriteMovieIds.includes(movieId);
   };
 
-  const toggleFavorite = (movieId) => {
-    if (isFavorite(movieId)) {
-      removeFavorite(movieId);
+  const toggleMovieFavorite = (movieId) => {
+    if (isMovieFavorite(movieId)) {
+      removeMovieFavorite(movieId);
     } else {
-      addFavorite(movieId);
+      addMovieFavorite(movieId);
     }
   };
+
+  // Fonctions pour les séries
+  const addTVFavorite = (tvId) => {
+    if (!favoriteTVIds.includes(tvId)) {
+      setFavoriteTVIds([...favoriteTVIds, tvId]);
+    }
+  };
+
+  const removeTVFavorite = (tvId) => {
+    setFavoriteTVIds(favoriteTVIds.filter((id) => id !== tvId));
+  };
+
+  const isTVFavorite = (tvId) => {
+    return favoriteTVIds.includes(tvId);
+  };
+
+  const toggleTVFavorite = (tvId) => {
+    if (isTVFavorite(tvId)) {
+      removeTVFavorite(tvId);
+    } else {
+      addTVFavorite(tvId);
+    }
+  };
+
+  // Compteurs totaux
+  const totalFavorites = favoriteMovieIds.length + favoriteTVIds.length;
 
   const value = {
-    favoriteIds,
+    // Films
+    favoriteMovieIds,
     favoriteMovies,
-    loading,
-    addFavorite,
-    removeFavorite,
-    isFavorite,
-    toggleFavorite,
+    loadingMovies,
+    addMovieFavorite,
+    removeMovieFavorite,
+    isMovieFavorite,
+    toggleMovieFavorite,
+
+    // Séries
+    favoriteTVIds,
+    favoriteTVShows,
+    loadingTV,
+    addTVFavorite,
+    removeTVFavorite,
+    isTVFavorite,
+    toggleTVFavorite,
+
+    // Global
+    totalFavorites,
+
+    // Backward compatibility (pour le header)
+    favoriteIds: [...favoriteMovieIds, ...favoriteTVIds],
   };
 
   return (

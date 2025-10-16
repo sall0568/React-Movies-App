@@ -6,10 +6,12 @@ import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
 import WatchProviders from "../components/WatchProviders";
 import Season from "../components/Season";
+import { useFavorites } from "../contexts/FavoritesContext";
 
 const TVDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { isTVFavorite, toggleTVFavorite } = useFavorites();
   const [show, setShow] = useState(null);
   const [credits, setCredits] = useState(null);
   const [videos, setVideos] = useState([]);
@@ -47,6 +49,9 @@ const TVDetail = () => {
             ),
           ]);
 
+        console.log("TV Show data:", showRes.data);
+        console.log("Seasons:", showRes.data.seasons);
+
         setShow(showRes.data);
         setCredits(creditsRes.data);
         setVideos(videosRes.data.results);
@@ -67,6 +72,10 @@ const TVDetail = () => {
     if (!date) return "";
     const [yy, mm, dd] = date.split("-");
     return [dd, mm, yy].join("/");
+  };
+
+  const handleSeasonClick = (seasonNumber) => {
+    navigate(`/tv/${id}/season/${seasonNumber}`);
   };
 
   if (loading) {
@@ -95,6 +104,7 @@ const TVDetail = () => {
   const trailer = videos.find(
     (video) => video.type === "Trailer" && video.site === "YouTube"
   );
+  const isFav = isTVFavorite(parseInt(id));
 
   return (
     <div className="tv-detail-page">
@@ -156,12 +166,20 @@ const TVDetail = () => {
             </div>
 
             <div className="genres">
-              {show.genres.map((genre) => (
-                <span key={genre.id} className="genre-badge">
-                  {genre.name}
-                </span>
-              ))}
+              {show.genres &&
+                show.genres.map((genre) => (
+                  <span key={genre.id} className="genre-badge">
+                    {genre.name}
+                  </span>
+                ))}
             </div>
+
+            <button
+              className={`btn-favorite ${isFav ? "active" : ""}`}
+              onClick={() => toggleTVFavorite(parseInt(id))}
+            >
+              {isFav ? "💔 Retirer des favoris" : "💖 Ajouter aux favoris"}
+            </button>
 
             <div className="overview">
               <h2>Synopsis</h2>
@@ -169,6 +187,25 @@ const TVDetail = () => {
             </div>
 
             <WatchProviders providers={watchProviders} />
+
+            {/* Section Saisons */}
+            {show.seasons && show.seasons.length > 0 && (
+              <div className="seasons-section">
+                <h2>Saisons ({show.number_of_seasons})</h2>
+                <div className="seasons-list">
+                  {show.seasons
+                    .filter((season) => season.season_number >= 0)
+                    .map((season) => (
+                      <Season
+                        key={season.id}
+                        season={season}
+                        showId={show.id}
+                        onEpisodeClick={handleSeasonClick}
+                      />
+                    ))}
+                </div>
+              </div>
+            )}
 
             {show.created_by && show.created_by.length > 0 && (
               <div className="creators">
@@ -186,27 +223,6 @@ const TVDetail = () => {
                       )}
                       <p>{creator.name}</p>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {show.seasons && show.seasons.length > 0 && (
-              <div className="seasons-section">
-                <h2>Saisons</h2>
-                <div className="seasons-grid">
-                  {show.seasons.map((season) => (
-                    <Season
-                      key={season.id}
-                      season={season}
-                      showId={show.id}
-                      onEpisodeClick={(seasonNumber) => {
-                        console.log(
-                          `Afficher les épisodes de la saison ${seasonNumber}`
-                        );
-                        // ici tu peux rediriger vers une page d'épisodes ou ouvrir une modal
-                      }}
-                    />
                   ))}
                 </div>
               </div>
