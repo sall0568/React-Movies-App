@@ -1,6 +1,7 @@
+// src/pages/TVDetail.jsx - VERSION MISE À JOUR
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { tvAPI } from "../services/api"; // 👈 Import du service API
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
@@ -25,41 +26,30 @@ const TVDetail = () => {
       setLoading(true);
       setError(null);
 
-      const API_KEY =
-        process.env.REACT_APP_TMDB_API_KEY ||
-        "5646ea2cef2a3d04dc2fbfc47c6c23f0";
-      const BASE_URL =
-        process.env.REACT_APP_TMDB_BASE_URL || "https://api.themoviedb.org/3";
-
       try {
-        const [showRes, creditsRes, videosRes, similarRes, providersRes] =
+        // ✅ Utilisation du service API avec Promise.all
+        const [showData, creditsData, videosData, similarData, providersData] =
           await Promise.all([
-            axios.get(`${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=fr-FR`),
-            axios.get(
-              `${BASE_URL}/tv/${id}/credits?api_key=${API_KEY}&language=fr-FR`
-            ),
-            axios.get(
-              `${BASE_URL}/tv/${id}/videos?api_key=${API_KEY}&language=fr-FR`
-            ),
-            axios.get(
-              `${BASE_URL}/tv/${id}/similar?api_key=${API_KEY}&language=fr-FR`
-            ),
-            axios.get(
-              `${BASE_URL}/tv/${id}/watch/providers?api_key=${API_KEY}`
-            ),
+            tvAPI.getDetails(id),
+            tvAPI.getCredits(id),
+            tvAPI.getVideos(id),
+            tvAPI.getSimilar(id),
+            tvAPI.getWatchProviders(id),
           ]);
 
-        console.log("TV Show data:", showRes.data);
-        console.log("Seasons:", showRes.data.seasons);
+        console.log("TV Show data:", showData);
+        console.log("Seasons:", showData.seasons);
 
-        setShow(showRes.data);
-        setCredits(creditsRes.data);
-        setVideos(videosRes.data.results);
-        setSimilar(similarRes.data.results.slice(0, 6));
-        setWatchProviders(providersRes.data.results.FR || null);
+        setShow(showData);
+        setCredits(creditsData);
+        setVideos(videosData.results);
+        setSimilar(similarData.results.slice(0, 6));
+        setWatchProviders(providersData.results.FR || null);
       } catch (err) {
         console.error("Error fetching TV details:", err);
-        setError("Impossible de charger les détails de la série.");
+        setError(
+          err.message || "Impossible de charger les détails de la série."
+        );
       } finally {
         setLoading(false);
       }

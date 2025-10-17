@@ -1,6 +1,7 @@
+// src/contexts/FavoritesContext.js - VERSION MISE À JOUR
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import axios from "axios";
+import { movieAPI, tvAPI } from "../services/api"; // 👈 Import du service
 
 const FavoritesContext = createContext();
 
@@ -26,12 +27,7 @@ export const FavoritesProvider = ({ children }) => {
   const [favoriteTVShows, setFavoriteTVShows] = useState([]);
   const [loadingTV, setLoadingTV] = useState(false);
 
-  const API_KEY =
-    process.env.REACT_APP_TMDB_API_KEY || "5646ea2cef2a3d04dc2fbfc47c6c23f0";
-  const BASE_URL =
-    process.env.REACT_APP_TMDB_BASE_URL || "https://api.themoviedb.org/3";
-
-  // Charger les détails des films favoris
+  // ✅ Charger les détails des films favoris
   useEffect(() => {
     const fetchFavoriteMovies = async () => {
       if (favoriteMovieIds.length === 0) {
@@ -42,11 +38,10 @@ export const FavoritesProvider = ({ children }) => {
       setLoadingMovies(true);
 
       try {
-        const promises = favoriteMovieIds.map((id) =>
-          axios.get(`${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=fr-FR`)
-        );
-        const responses = await Promise.all(promises);
-        setFavoriteMovies(responses.map((res) => res.data));
+        // 👇 Utilisation du service API
+        const promises = favoriteMovieIds.map((id) => movieAPI.getDetails(id));
+        const movies = await Promise.all(promises);
+        setFavoriteMovies(movies);
       } catch (error) {
         console.error("Error fetching favorite movies:", error);
       } finally {
@@ -55,9 +50,9 @@ export const FavoritesProvider = ({ children }) => {
     };
 
     fetchFavoriteMovies();
-  }, [favoriteMovieIds, API_KEY, BASE_URL]);
+  }, [favoriteMovieIds]);
 
-  // Charger les détails des séries favorites
+  // ✅ Charger les détails des séries favorites
   useEffect(() => {
     const fetchFavoriteTVShows = async () => {
       if (favoriteTVIds.length === 0) {
@@ -68,11 +63,10 @@ export const FavoritesProvider = ({ children }) => {
       setLoadingTV(true);
 
       try {
-        const promises = favoriteTVIds.map((id) =>
-          axios.get(`${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=fr-FR`)
-        );
-        const responses = await Promise.all(promises);
-        setFavoriteTVShows(responses.map((res) => res.data));
+        // 👇 Utilisation du service API
+        const promises = favoriteTVIds.map((id) => tvAPI.getDetails(id));
+        const shows = await Promise.all(promises);
+        setFavoriteTVShows(shows);
       } catch (error) {
         console.error("Error fetching favorite TV shows:", error);
       } finally {
@@ -81,7 +75,7 @@ export const FavoritesProvider = ({ children }) => {
     };
 
     fetchFavoriteTVShows();
-  }, [favoriteTVIds, API_KEY, BASE_URL]);
+  }, [favoriteTVIds]);
 
   // Fonctions pour les films
   const addMovieFavorite = (movieId) => {
@@ -154,7 +148,7 @@ export const FavoritesProvider = ({ children }) => {
     // Global
     totalFavorites,
 
-    // Backward compatibility (pour le header)
+    // Backward compatibility
     favoriteIds: [...favoriteMovieIds, ...favoriteTVIds],
   };
 

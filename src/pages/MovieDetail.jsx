@@ -1,6 +1,7 @@
+// src/pages/MovieDetail.jsx - VERSION MISE À JOUR
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { movieAPI } from "../services/api"; // 👈 Import du service API
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
@@ -25,50 +26,33 @@ const MovieDetail = () => {
       setLoading(true);
       setError(null);
 
-      const API_KEY =
-        process.env.REACT_APP_TMDB_API_KEY ||
-        "5646ea2cef2a3d04dc2fbfc47c6c23f0";
-      const BASE_URL =
-        process.env.REACT_APP_TMDB_BASE_URL || "https://api.themoviedb.org/3";
-
       try {
+        // ✅ Utilisation du service API avec Promise.all
         const [
-          movieRes,
-          creditsRes,
-          videosRes,
-          similarRes,
-          providersRes,
-          reviewsRes,
+          movieData,
+          creditsData,
+          videosData,
+          similarData,
+          providersData,
+          reviewsData,
         ] = await Promise.all([
-          axios.get(
-            `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=fr-FR`
-          ),
-          axios.get(
-            `${BASE_URL}/movie/${id}/credits?api_key=${API_KEY}&language=fr-FR`
-          ),
-          axios.get(
-            `${BASE_URL}/movie/${id}/videos?api_key=${API_KEY}&language=fr-FR`
-          ),
-          axios.get(
-            `${BASE_URL}/movie/${id}/similar?api_key=${API_KEY}&language=fr-FR`
-          ),
-          axios.get(
-            `${BASE_URL}/movie/${id}/watch/providers?api_key=${API_KEY}`
-          ),
-          axios.get(
-            `${BASE_URL}/movie/${id}/reviews?api_key=${API_KEY}&language=fr-FR`
-          ),
+          movieAPI.getDetails(id),
+          movieAPI.getCredits(id),
+          movieAPI.getVideos(id),
+          movieAPI.getSimilar(id),
+          movieAPI.getWatchProviders(id),
+          movieAPI.getReviews(id),
         ]);
 
-        setMovie(movieRes.data);
-        setCredits(creditsRes.data);
-        setVideos(videosRes.data.results);
-        setSimilar(similarRes.data.results.slice(0, 6));
-        setWatchProviders(providersRes.data.results.FR || null);
-        setReviews(reviewsRes.data.results.slice(0, 3));
+        setMovie(movieData);
+        setCredits(creditsData);
+        setVideos(videosData.results);
+        setSimilar(similarData.results.slice(0, 6));
+        setWatchProviders(providersData.results.FR || null);
+        setReviews(reviewsData.results.slice(0, 3));
       } catch (err) {
         console.error("Error fetching movie details:", err);
-        setError("Impossible de charger les détails du film.");
+        setError(err.message || "Impossible de charger les détails du film.");
       } finally {
         setLoading(false);
       }

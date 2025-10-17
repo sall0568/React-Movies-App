@@ -1,6 +1,7 @@
-import axios from "axios";
+// src/components/TVForm.jsx - VERSION MISE À JOUR
 import React, { useState, useEffect, useCallback } from "react";
 import { useDebounce } from "../hooks/useDebounce";
+import { tvAPI } from "../services/api"; // 👈 Import du service API
 import TVCard from "./TVCard";
 import Loading from "./Loading";
 import ErrorMessage from "./ErrorMessage";
@@ -18,39 +19,33 @@ const TVForm = () => {
 
   const debouncedSearch = useDebounce(search, 500);
 
+  // ✅ Fonction pour charger les séries populaires
   const fetchPopularTV = useCallback(async (pageNum = 1) => {
     setLoading(true);
     setError(null);
 
-    const API_KEY =
-      process.env.REACT_APP_TMDB_API_KEY || "5646ea2cef2a3d04dc2fbfc47c6c23f0";
-    const BASE_URL =
-      process.env.REACT_APP_TMDB_BASE_URL || "https://api.themoviedb.org/3";
-
     try {
-      const response = await axios.get(`${BASE_URL}/tv/popular`, {
-        params: {
-          api_key: API_KEY,
-          language: "fr-FR",
-          page: pageNum,
-        },
-      });
+      // 👇 Utilisation du service API
+      const data = await tvAPI.getPopular(pageNum);
 
       if (pageNum === 1) {
-        setTvData(response.data.results);
+        setTvData(data.results);
       } else {
-        setTvData((prev) => [...prev, ...response.data.results]);
+        setTvData((prev) => [...prev, ...data.results]);
       }
 
-      setHasMore(pageNum < response.data.total_pages);
+      setHasMore(pageNum < data.total_pages);
     } catch (err) {
       console.error("Error fetching popular TV shows:", err);
-      setError("Impossible de charger les séries. Veuillez réessayer.");
+      setError(
+        err.message || "Impossible de charger les séries. Veuillez réessayer."
+      );
     } finally {
       setLoading(false);
     }
   }, []);
 
+  // ✅ Fonction pour rechercher des séries
   const fetchTV = useCallback(
     async (searchTerm, pageNum = 1) => {
       if (!searchTerm.trim()) {
@@ -61,32 +56,22 @@ const TVForm = () => {
       setLoading(true);
       setError(null);
 
-      const API_KEY =
-        process.env.REACT_APP_TMDB_API_KEY ||
-        "5646ea2cef2a3d04dc2fbfc47c6c23f0";
-      const BASE_URL =
-        process.env.REACT_APP_TMDB_BASE_URL || "https://api.themoviedb.org/3";
-
       try {
-        const response = await axios.get(`${BASE_URL}/search/tv`, {
-          params: {
-            api_key: API_KEY,
-            query: searchTerm,
-            language: "fr-FR",
-            page: pageNum,
-          },
-        });
+        // 👇 Utilisation du service API
+        const data = await tvAPI.search(searchTerm, pageNum);
 
         if (pageNum === 1) {
-          setTvData(response.data.results);
+          setTvData(data.results);
         } else {
-          setTvData((prev) => [...prev, ...response.data.results]);
+          setTvData((prev) => [...prev, ...data.results]);
         }
 
-        setHasMore(pageNum < response.data.total_pages);
+        setHasMore(pageNum < data.total_pages);
       } catch (err) {
         console.error("Error fetching TV shows:", err);
-        setError("Impossible de charger les séries. Veuillez réessayer.");
+        setError(
+          err.message || "Impossible de charger les séries. Veuillez réessayer."
+        );
       } finally {
         setLoading(false);
       }
@@ -94,6 +79,7 @@ const TVForm = () => {
     [fetchPopularTV]
   );
 
+  // Charger les séries populaires au montage
   useEffect(() => {
     fetchPopularTV(1);
   }, [fetchPopularTV]);

@@ -1,6 +1,7 @@
+// src/pages/PersonDetail.jsx - VERSION MISE À JOUR
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { personAPI } from "../services/api"; // 👈 Import du service API
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
@@ -18,27 +19,20 @@ const PersonDetail = () => {
       setLoading(true);
       setError(null);
 
-      const API_KEY =
-        process.env.REACT_APP_TMDB_API_KEY ||
-        "5646ea2cef2a3d04dc2fbfc47c6c23f0";
-      const BASE_URL =
-        process.env.REACT_APP_TMDB_BASE_URL || "https://api.themoviedb.org/3";
-
       try {
-        const [personRes, creditsRes] = await Promise.all([
-          axios.get(
-            `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=fr-FR`
-          ),
-          axios.get(
-            `${BASE_URL}/person/${id}/movie_credits?api_key=${API_KEY}&language=fr-FR`
-          ),
+        // ✅ Utilisation du service API avec Promise.all
+        const [personData, creditsData] = await Promise.all([
+          personAPI.getDetails(id),
+          personAPI.getMovieCredits(id),
         ]);
 
-        setPerson(personRes.data);
-        setCredits(creditsRes.data);
+        setPerson(personData);
+        setCredits(creditsData);
       } catch (err) {
         console.error("Error fetching person details:", err);
-        setError("Impossible de charger les détails de la personne.");
+        setError(
+          err.message || "Impossible de charger les détails de la personne."
+        );
       } finally {
         setLoading(false);
       }

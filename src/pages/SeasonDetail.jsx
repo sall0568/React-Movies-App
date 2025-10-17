@@ -1,6 +1,7 @@
+// src/pages/SeasonDetail.jsx - VERSION MISE À JOUR
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { tvAPI } from "../services/api"; // 👈 Import du service API
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
@@ -18,25 +19,20 @@ const SeasonDetail = () => {
       setLoading(true);
       setError(null);
 
-      const API_KEY =
-        process.env.REACT_APP_TMDB_API_KEY ||
-        "5646ea2cef2a3d04dc2fbfc47c6c23f0";
-      const BASE_URL =
-        process.env.REACT_APP_TMDB_BASE_URL || "https://api.themoviedb.org/3";
-
       try {
-        const [seasonRes, showRes] = await Promise.all([
-          axios.get(
-            `${BASE_URL}/tv/${tvId}/season/${seasonNumber}?api_key=${API_KEY}&language=fr-FR`
-          ),
-          axios.get(`${BASE_URL}/tv/${tvId}?api_key=${API_KEY}&language=fr-FR`),
+        // ✅ Utilisation du service API avec Promise.all
+        const [seasonData, showData] = await Promise.all([
+          tvAPI.getSeasonDetails(tvId, seasonNumber),
+          tvAPI.getDetails(tvId),
         ]);
 
-        setSeason(seasonRes.data);
-        setShow(showRes.data);
+        setSeason(seasonData);
+        setShow(showData);
       } catch (err) {
         console.error("Error fetching season details:", err);
-        setError("Impossible de charger les détails de la saison.");
+        setError(
+          err.message || "Impossible de charger les détails de la saison."
+        );
       } finally {
         setLoading(false);
       }
