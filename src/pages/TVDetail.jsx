@@ -8,6 +8,7 @@ import ErrorMessage from "../components/ErrorMessage";
 import WatchProviders from "../components/WatchProviders";
 import Season from "../components/Season";
 import { useFavorites } from "../contexts/FavoritesContext";
+import Footer from "../components/Footer";
 
 const TVDetail = () => {
   const { id } = useParams();
@@ -287,6 +288,7 @@ const TVDetail = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

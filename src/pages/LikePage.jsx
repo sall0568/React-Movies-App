@@ -5,6 +5,7 @@ import TVCard from "../components/TVCard";
 import Loading from "../components/Loading";
 import EmptyState from "../components/EmptyState";
 import { useFavorites } from "../contexts/FavoritesContext";
+import Footer from "../components/Footer";
 
 const LikePage = () => {
   const { favoriteMovies, favoriteTVShows, loadingMovies, loadingTV } =
@@ -128,6 +129,7 @@ const LikePage = () => {
             )}
         </>
       )}
+      <Footer />
     </div>
   );
 };

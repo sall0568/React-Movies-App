@@ -7,6 +7,7 @@ import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
 import WatchProviders from "../components/WatchProviders";
 import { useFavorites } from "../contexts/FavoritesContext";
+import Footer from "../components/Footer";
 
 const MovieDetail = () => {
   const { id } = useParams();
@@ -266,6 +267,7 @@ const MovieDetail = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

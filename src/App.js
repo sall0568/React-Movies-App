@@ -1,3 +1,4 @@
+// src/App.js - VERSION MISE À JOUR avec routes légales
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
@@ -13,6 +14,12 @@ const TVShows = lazy(() => import("./pages/TVShows"));
 const TVDetail = lazy(() => import("./pages/TVDetail"));
 const SeasonDetail = lazy(() => import("./pages/SeasonDetail"));
 
+// Pages légales
+const About = lazy(() => import("./pages/About"));
+const Legal = lazy(() => import("./pages/Legal"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+
 const AppContent = () => {
   const { theme } = useTheme();
 
@@ -21,6 +28,7 @@ const AppContent = () => {
       <BrowserRouter>
         <Suspense fallback={<Loading />}>
           <Routes>
+            {/* Routes principales */}
             <Route path="/" element={<Home />} />
             <Route path="/series" element={<TVShows />} />
             <Route path="/coups-de-coeur" element={<LikePage />} />
@@ -31,6 +39,14 @@ const AppContent = () => {
             />
             <Route path="/tv/:id" element={<TVDetail />} />
             <Route path="/person/:id" element={<PersonDetail />} />
+
+            {/* Routes légales */}
+            <Route path="/about" element={<About />} />
+            <Route path="/legal" element={<Legal />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+
+            {/* Route 404 */}
             <Route path="*" element={<Home />} />
           </Routes>
         </Suspense>

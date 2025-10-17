@@ -5,6 +5,7 @@ import { tvAPI } from "../services/api"; // 👈 Import du service API
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
+import Footer from "../components/Footer";
 
 const SeasonDetail = () => {
   const { tvId, seasonNumber } = useParams();
@@ -176,6 +177,7 @@ const SeasonDetail = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
