@@ -1,5 +1,5 @@
 {
-  "name": "react-movie",
+  "name": "CinéScope",
   "version": "2.0.0",
   "private": true,
   "description": "Application React de recherche et gestion de films avec TMDB API",

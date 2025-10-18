@@ -11,7 +11,7 @@ const Footer = () => {
       <div className="footer-content">
         {/* Section À propos */}
         <div className="footer-section">
-          <h3>React Movies</h3>
+          <h3>CinéScope</h3>
           <p>
             Votre application de découverte de films et séries, propulsée par
             l'API TMDB.
@@ -88,7 +88,7 @@ const Footer = () => {
       {/* Copyright */}
       <div className="footer-bottom">
         <p>
-          © {currentYear} React Movies - Développé par{" "}
+          © {currentYear} CinéScope - Développé par{" "}
           <a
             href="https://github.com/sall0568"
             target="_blank"

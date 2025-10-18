@@ -15,8 +15,8 @@ const Privacy = () => {
 
         <section className="intro">
           <p>
-            Chez <strong>React Movies</strong>, nous prenons la protection de
-            vos données personnelles très au sérieux. Cette politique de
+            Chez <strong>CinéScope</strong>, nous prenons la protection de vos
+            données personnelles très au sérieux. Cette politique de
             confidentialité explique comment nous collectons, utilisons et
             protégeons vos informations.
           </p>
@@ -29,7 +29,7 @@ const Privacy = () => {
             <br />
             <strong>Email :</strong> mamadouhassimiousall693@gmail.com
             <br />
-            <strong>Application :</strong> React Movies
+            <strong>Application :</strong> CinéScope
           </p>
         </section>
 
@@ -230,7 +230,7 @@ const Privacy = () => {
               <li>Appuyez sur F12 pour ouvrir les DevTools</li>
               <li>Allez dans l'onglet "Application" (ou "Storage")</li>
               <li>Dans le menu de gauche, cliquez sur "Local Storage"</li>
-              <li>Sélectionnez le site React Movies</li>
+              <li>Sélectionnez le site CinéScope</li>
               <li>Cliquez-droit → "Clear"</li>
             </ol>
           </div>
@@ -315,10 +315,10 @@ const Privacy = () => {
           <h2>📌 Résumé</h2>
           <div className="summary-content">
             <p>
-              <strong>En résumé :</strong> React Movies ne collecte AUCUNE
-              donnée personnelle. Toutes vos préférences (favoris, thème) sont
-              stockées uniquement dans votre navigateur et ne quittent jamais
-              votre appareil.
+              <strong>En résumé :</strong> CinéScope ne collecte AUCUNE donnée
+              personnelle. Toutes vos préférences (favoris, thème) sont stockées
+              uniquement dans votre navigateur et ne quittent jamais votre
+              appareil.
             </p>
             <p>
               Nous utilisons uniquement l'API TMDB pour afficher les

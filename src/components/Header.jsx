@@ -10,7 +10,7 @@ const Header = () => {
 
   return (
     <>
-      <div className={`header ${menuOpen ? 'menu-is-open' : ''}`}>
+      <div className={`header ${menuOpen ? "menu-is-open" : ""}`}>
         <button
           className="menu-toggle"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -18,8 +18,8 @@ const Header = () => {
         >
           {menuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
-
-        <h1>React Movies</h1>
+        <img src="/android-chrome-192x192.png" alt="Logo du site sinéScope" />
+        <h1>CinéScope</h1>
 
         <nav className={menuOpen ? "nav-open" : ""}>
           <ul>
@@ -65,8 +65,8 @@ const Header = () => {
 
       {/* Overlay en dehors du header pour éviter les conflits de z-index */}
       {menuOpen && (
-        <div 
-          className="nav-overlay-mobile" 
+        <div
+          className="nav-overlay-mobile"
           onClick={() => setMenuOpen(false)}
         />
       )}

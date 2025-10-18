@@ -17,7 +17,7 @@ const About = () => {
       <Header />
       <div className="about-content">
         <div className="about-hero">
-          <h1>À propos de React Movies</h1>
+          <h1>À propos de CinéScope</h1>
           <p className="tagline">
             Votre compagnon de découverte cinématographique 🎬
           </p>
@@ -25,11 +25,11 @@ const About = () => {
 
         <section className="about-intro">
           <p>
-            <strong>React Movies</strong> est une application web moderne qui
-            vous permet de découvrir, rechercher et organiser vos films et
-            séries TV préférés. Développée avec passion et à des fins
-            éducatives, cette application met en avant les meilleures pratiques
-            du développement web moderne.
+            <strong>CinéScope</strong> est une application web moderne qui vous
+            permet de découvrir, rechercher et organiser vos films et séries TV
+            préférés. Développée avec passion et à des fins éducatives, cette
+            application met en avant les meilleures pratiques du développement
+            web moderne.
           </p>
         </section>
 
@@ -185,7 +185,7 @@ const About = () => {
               <p className="developer-title">Développeur Full Stack</p>
               <p className="developer-bio">
                 Passionné par le développement web et les nouvelles
-                technologies, j'ai créé React Movies pour mettre en pratique mes
+                technologies, j'ai créé CinéScope pour mettre en pratique mes
                 compétences et partager ma passion pour le cinéma.
               </p>
               <div className="developer-links">
@@ -214,8 +214,8 @@ const About = () => {
           <h2>📚 Projet éducatif</h2>
           <div className="info-box">
             <p>
-              <strong>React Movies</strong> a été développé dans un but éducatif
-              et de démonstration de compétences en développement web. Ce projet
+              <strong>CinéScope</strong> a été développé dans un but éducatif et
+              de démonstration de compétences en développement web. Ce projet
               illustre :
             </p>
             <ul>

@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "CinéScope",
+  "name": "CinéScope - Films et Séries",
+  "description": "Découvrez et explorez vos films et séries préférés",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,18 +9,27 @@
       "type": "image/x-icon"
     },
     {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    },
+    {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#546fe4",
+  "background_color": "#212040",
+  "orientation": "portrait-primary",
+  "categories": ["entertainment", "lifestyle"]
 }

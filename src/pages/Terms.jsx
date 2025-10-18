@@ -15,7 +15,7 @@ const Terms = () => {
 
         <section className="intro">
           <p>
-            Bienvenue sur <strong>React Movies</strong>. En utilisant cette
+            Bienvenue sur <strong>CinéScope</strong>. En utilisant cette
             application, vous acceptez les présentes conditions générales
             d'utilisation. Veuillez les lire attentivement.
           </p>
@@ -26,15 +26,15 @@ const Terms = () => {
           <p>
             Les présentes Conditions Générales d'Utilisation (CGU) ont pour
             objet de définir les modalités et conditions d'utilisation de
-            l'application web React Movies, ainsi que les droits et obligations
-            des utilisateurs.
+            l'application web CinéScope, ainsi que les droits et obligations des
+            utilisateurs.
           </p>
         </section>
 
         <section>
           <h2>2. Accès au service</h2>
           <h3>2.1 Conditions d'accès</h3>
-          <p>L'accès à React Movies est :</p>
+          <p>L'accès à CinéScope est :</p>
           <ul>
             <li>✅ Gratuit</li>
             <li>✅ Sans inscription</li>
@@ -43,7 +43,7 @@ const Terms = () => {
           </ul>
 
           <h3>2.2 Prérequis techniques</h3>
-          <p>Pour utiliser React Movies, vous devez disposer de :</p>
+          <p>Pour utiliser CinéScope, vous devez disposer de :</p>
           <ul>
             <li>Un navigateur web récent (Chrome, Firefox, Safari, Edge)</li>
             <li>Une connexion internet</li>
@@ -53,7 +53,7 @@ const Terms = () => {
 
         <section>
           <h2>3. Description du service</h2>
-          <p>React Movies est une application web permettant de :</p>
+          <p>CinéScope est une application web permettant de :</p>
           <ul>
             <li>🔍 Rechercher des films et séries TV</li>
             <li>
@@ -70,7 +70,7 @@ const Terms = () => {
         <section>
           <h2>4. Utilisation du service</h2>
           <h3>4.1 Utilisation autorisée</h3>
-          <p>Vous êtes autorisé à utiliser React Movies pour :</p>
+          <p>Vous êtes autorisé à utiliser CinéScope pour :</p>
           <ul>
             <li>Votre usage personnel et non commercial</li>
             <li>Rechercher et découvrir des films et séries</li>
@@ -99,8 +99,8 @@ const Terms = () => {
           <h2>5. Propriété intellectuelle</h2>
           <h3>5.1 Code source de l'application</h3>
           <p>
-            Le code source de React Movies est protégé par le droit d'auteur.
-            Tous droits réservés à Sall Mamadou.
+            Le code source de CinéScope est protégé par le droit d'auteur. Tous
+            droits réservés à Sall Mamadou.
           </p>
           <p>
             Le code est disponible sur GitHub à des fins éducatives. Toute
@@ -110,7 +110,7 @@ const Terms = () => {
           <h3>5.2 Contenus TMDB</h3>
           <div className="tmdb-box">
             <p>
-              Les données affichées sur React Movies (affiches, synopsis, notes,
+              Les données affichées sur CinéScope (affiches, synopsis, notes,
               informations sur les films et séries) proviennent de{" "}
               <strong>The Movie Database (TMDB)</strong> et sont soumises à
               leurs propres conditions d'utilisation.
@@ -140,8 +140,8 @@ const Terms = () => {
           <h2>6. Responsabilité</h2>
           <h3>6.1 Disponibilité du service</h3>
           <p>
-            Nous nous efforçons de maintenir React Movies accessible en
-            permanence, mais ne pouvons garantir :
+            Nous nous efforçons de maintenir CinéScope accessible en permanence,
+            mais ne pouvons garantir :
           </p>
           <ul>
             <li>Une disponibilité 100% du service</li>
@@ -165,7 +165,7 @@ const Terms = () => {
           </ul>
 
           <h3>6.3 Limitation de responsabilité</h3>
-          <p>En utilisant React Movies, vous reconnaissez que :</p>
+          <p>En utilisant CinéScope, vous reconnaissez que :</p>
           <ul>
             <li>
               L'application est fournie "en l'état", sans garantie d'aucune
@@ -186,7 +186,7 @@ const Terms = () => {
           <h2>7. Données personnelles</h2>
           <h3>7.1 Protection de la vie privée</h3>
           <p>
-            React Movies ne collecte AUCUNE donnée personnelle. Pour plus
+            CinéScope ne collecte AUCUNE donnée personnelle. Pour plus
             d'informations, consultez notre{" "}
             <a href="/privacy">Politique de confidentialité</a>.
           </p>
@@ -207,7 +207,7 @@ const Terms = () => {
 
         <section>
           <h2>8. Liens externes</h2>
-          <p>React Movies contient des liens vers des sites externes :</p>
+          <p>CinéScope contient des liens vers des sites externes :</p>
           <ul>
             <li>TMDB (base de données de films)</li>
             <li>YouTube (bandes-annonces)</li>
@@ -254,9 +254,9 @@ const Terms = () => {
           <h2>11. Résiliation</h2>
           <h3>11.1 Par l'utilisateur</h3>
           <p>
-            Vous pouvez cesser d'utiliser React Movies à tout moment, sans
-            préavis ni justification. Il vous suffit de fermer l'application
-            et/ou de supprimer vos données locales.
+            Vous pouvez cesser d'utiliser CinéScope à tout moment, sans préavis
+            ni justification. Il vous suffit de fermer l'application et/ou de
+            supprimer vos données locales.
           </p>
 
           <h3>11.2 Par l'éditeur</h3>
@@ -307,8 +307,8 @@ const Terms = () => {
           <div className="disclaimer-box">
             <h3>⚠️ Avertissement important</h3>
             <p>
-              <strong>React Movies</strong> est une application indépendante
-              créée à des fins éducatives. Cette application :
+              <strong>CinéScope</strong> est une application indépendante créée
+              à des fins éducatives. Cette application :
             </p>
             <ul>
               <li>❌ N'est PAS affiliée à The Movie Database (TMDB)</li>
@@ -317,7 +317,7 @@ const Terms = () => {
               <li>❌ N'est PAS un produit officiel de TMDB</li>
             </ul>
             <p>
-              <strong>React Movies</strong> utilise simplement l'API publique de
+              <strong>CinéScope</strong> utilise simplement l'API publique de
               TMDB conformément à leurs conditions d'utilisation.
             </p>
             <p>
@@ -332,7 +332,7 @@ const Terms = () => {
           <h2>15. Acceptation des conditions</h2>
           <div className="acceptance-box">
             <p>
-              En utilisant React Movies, vous reconnaissez avoir lu, compris et
+              En utilisant CinéScope, vous reconnaissez avoir lu, compris et
               accepté l'intégralité des présentes Conditions Générales
               d'Utilisation.
             </p>

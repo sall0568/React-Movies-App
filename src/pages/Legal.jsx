@@ -16,7 +16,7 @@ const Legal = () => {
         <section>
           <h2>1. Éditeur du site</h2>
           <p>
-            <strong>Nom :</strong> React Movies
+            <strong>Nom :</strong> CinéScope
             <br />
             <strong>Responsable de publication :</strong> Sall Mamadou
             <br />

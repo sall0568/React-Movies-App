@@ -1,14 +1,16 @@
-# 🎬 React Movies - Application améliorée
+# 🎬 CinéScope - Application améliorée
 
 Application React de recherche et gestion de films utilisant l'API TMDB.
 
 ## ✨ Nouvelles fonctionnalités
 
 ### 🔐 Sécurité
+
 - ✅ API Key sécurisée dans `.env`
 - ✅ Gestion d'erreurs robuste
 
 ### 🎨 Interface utilisateur
+
 - ✅ Mode sombre/clair avec toggle
 - ✅ Design responsive (mobile-friendly)
 - ✅ Animations et transitions fluides
@@ -17,6 +19,7 @@ Application React de recherche et gestion de films utilisant l'API TMDB.
 - ✅ États vides avec illustrations
 
 ### 🔍 Recherche et filtres
+
 - ✅ Debounce sur la recherche (500ms)
 - ✅ Filtrage par genre
 - ✅ Filtrage par note minimale
@@ -24,6 +27,7 @@ Application React de recherche et gestion de films utilisant l'API TMDB.
 - ✅ Pagination/Load More
 
 ### 💖 Gestion des favoris
+
 - ✅ Context API pour état global
 - ✅ Custom hook `useLocalStorage`
 - ✅ Badge avec compteur de favoris
@@ -31,6 +35,7 @@ Application React de recherche et gestion de films utilisant l'API TMDB.
 - ✅ Pas de rechargement de page
 
 ### 🎥 Page de détails
+
 - ✅ Informations complètes du film
 - ✅ Casting avec photos
 - ✅ Bande-annonce YouTube
@@ -38,12 +43,14 @@ Application React de recherche et gestion de films utilisant l'API TMDB.
 - ✅ Design immersif avec backdrop
 
 ### ⚡ Performance
+
 - ✅ Lazy loading des pages
 - ✅ Lazy loading des images
 - ✅ Code splitting
 - ✅ Optimisation des re-renders
 
 ### ♿ Accessibilité
+
 - ✅ Labels ARIA
 - ✅ Navigation au clavier
 - ✅ Contraste des couleurs
@@ -102,6 +109,7 @@ src/
 ## 🚀 Améliorations implémentées
 
 ### Critiques (✅ Complétées)
+
 1. ✅ Remplacement localStorage par Context + Hook
 2. ✅ Correction bug duplication LikePage
 3. ✅ Sécurisation API Key
@@ -111,6 +119,7 @@ src/
 7. ✅ Debounce sur recherche
 
 ### Fonctionnelles (✅ Complétées)
+
 8. ✅ Pagination/Load More
 9. ✅ Filtres par genre et note
 10. ✅ Page de détails du film
@@ -119,12 +128,14 @@ src/
 13. ✅ Films similaires
 
 ### UI/UX (✅ Complétées)
+
 14. ✅ Animations et transitions
 15. ✅ Mode sombre/clair
 16. ✅ Design responsive
 17. ✅ Accessibilité (ARIA)
 
 ### Techniques (✅ Complétées)
+
 18. ✅ Gestion d'erreurs robuste
 19. ✅ Lazy loading
 20. ✅ Code splitting
@@ -133,28 +144,33 @@ src/
 ## 🎯 Utilisation
 
 ### Recherche de films
+
 1. Tapez le titre d'un film dans la barre de recherche
 2. Les résultats s'affichent automatiquement (avec debounce)
 3. Utilisez les filtres pour affiner votre recherche
 
 ### Gestion des favoris
+
 1. Cliquez sur "💖 Ajouter aux favoris" sur une carte
 2. Accédez à vos favoris via le menu "Coups de coeur"
 3. Le badge affiche le nombre de favoris
 
 ### Page de détails
+
 1. Cliquez sur une carte de film
 2. Consultez toutes les informations
 3. Regardez la bande-annonce
 4. Découvrez des films similaires
 
 ### Thème
+
 - Cliquez sur le bouton ☀️/🌙 en haut à droite
 - Le thème est sauvegardé automatiquement
 
 ## 🔧 Configuration
 
 ### Variables d'environnement (.env)
+
 ```
 REACT_APP_TMDB_API_KEY=votre_clé_api
 REACT_APP_TMDB_BASE_URL=https://api.themoviedb.org/3
@@ -162,17 +178,20 @@ REACT_APP_TMDB_IMAGE_BASE_URL=https://image.tmdb.org/t/p/original
 ```
 
 ## 📱 Responsive Design
+
 - ✅ Desktop (> 1024px)
 - ✅ Tablet (768px - 1024px)
 - ✅ Mobile (< 768px)
 - ✅ Menu burger sur mobile
 
 ## 🎨 Thèmes
+
 - **Dark** : Thème sombre par défaut
 - **Light** : Thème clair moderne
 - Transition douce entre les thèmes
 
 ## 🔜 Améliorations futures possibles
+
 - [ ] Tests unitaires (Jest + React Testing Library)
 - [ ] Migration vers TypeScript
 - [ ] PWA avec Service Worker
@@ -185,6 +204,7 @@ REACT_APP_TMDB_IMAGE_BASE_URL=https://image.tmdb.org/t/p/original
 ## 📝 Notes de développement
 
 ### Points d'attention
+
 - Toujours utiliser les contexts pour l'état global
 - Utiliser `useDebounce` pour les inputs de recherche
 - Lazy loading pour les images et les routes
@@ -192,6 +212,7 @@ REACT_APP_TMDB_IMAGE_BASE_URL=https://image.tmdb.org/t/p/original
 - Messages utilisateur appropriés
 
 ### Best Practices appliquées
+
 - ✅ Séparation des préoccupations
 - ✅ Composants réutilisables
 - ✅ Custom hooks pour logique métier
@@ -203,15 +224,18 @@ REACT_APP_TMDB_IMAGE_BASE_URL=https://image.tmdb.org/t/p/original
 ## 🐛 Débogage
 
 Si vous rencontrez des problèmes :
+
 1. Vérifiez que le fichier `.env` existe et contient votre API key
 2. Vérifiez la console pour les erreurs
 3. Assurez-vous que tous les modules sont installés
 4. Videz le cache du navigateur si nécessaire
 
 ## 📄 Licence
+
 Ce projet est à des fins éducatives.
 
 ## 🙏 Crédits
+
 - API : [The Movie Database (TMDB)](https://www.themoviedb.org/)
 - Framework : React 18
 - Routing : React Router v6
@@ -221,6 +245,7 @@ Ce projet est à des fins éducatives.
 ## 👨‍💻 Auteur
 
 **Sall Mamadou**
+
 - GitHub: [@sall0568](https://github.com/sall0568)
 
 ---
@@ -235,6 +260,7 @@ Ce projet est à des fins éducatives.
 ## 📞 Support
 
 Pour toute question ou problème:
+
 - Ouvrir une issue sur GitHub
 - Email: mamadouhassimiousall693@gmail.com
 
