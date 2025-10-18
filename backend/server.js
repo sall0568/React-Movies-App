@@ -15,8 +15,8 @@ const corsOptions = {
   origin:
     process.env.NODE_ENV === "production"
       ? [
-          "https://votre-domaine.vercel.app", // Remplacer par votre domaine de production
-          "https://votre-domaine.netlify.app",
+          "https://moviereverse.netlify.app", // ⬅️ Remplacez par votre URL
+          "https://cinescope-app.netlify.app",
         ]
       : ["http://localhost:3000", "http://127.0.0.1:3000"],
   credentials: true,
