@@ -1,11 +1,9 @@
 // src/services/api.js
 import axios from "axios";
 
-// URL du backend
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
-// Instance axios configurée
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 15000,
@@ -14,11 +12,7 @@ const api = axios.create({
   },
 });
 
-// ========================================
-// INTERCEPTEURS
-// ========================================
-
-// Intercepteur de requête (optionnel - pour le logging)
+// Intercepteurs (garder ceux existants)
 api.interceptors.request.use(
   (config) => {
     console.log(`🔵 API Request: ${config.method.toUpperCase()} ${config.url}`);
@@ -30,7 +24,6 @@ api.interceptors.request.use(
   }
 );
 
-// Intercepteur de réponse pour gérer les erreurs
 api.interceptors.response.use(
   (response) => {
     console.log(`✅ API Response: ${response.config.url}`);
@@ -39,7 +32,6 @@ api.interceptors.response.use(
   (error) => {
     console.error("❌ API Error:", error);
 
-    // Gestion personnalisée des erreurs
     if (error.response) {
       const { status, data } = error.response;
 
@@ -62,7 +54,6 @@ api.interceptors.response.use(
           );
       }
     } else if (error.request) {
-      // Pas de réponse du serveur
       return Promise.reject(
         new Error(
           "Impossible de contacter le serveur. Vérifiez votre connexion."
@@ -92,6 +83,30 @@ export const movieAPI = {
     const response = await api.get("/tmdb/movie/now_playing", {
       params: { language: "fr-FR", page },
     });
+    return response.data;
+  },
+
+  // 🆕 DISCOVER - Filtres avancés
+  discover: async (filters = {}) => {
+    const params = {
+      language: "fr-FR",
+      sort_by: filters.sortBy || "popularity.desc",
+      page: filters.page || 1,
+      include_adult: false,
+      include_video: false,
+      ...filters,
+    };
+
+    // Nettoyer les paramètres undefined/null
+    Object.keys(params).forEach(
+      (key) =>
+        (params[key] === undefined ||
+          params[key] === null ||
+          params[key] === "") &&
+        delete params[key]
+    );
+
+    const response = await api.get("/tmdb/discover/movie", { params });
     return response.data;
   },
 
@@ -147,7 +162,6 @@ export const movieAPI = {
 // ========================================
 
 export const tvAPI = {
-  // Recherche de séries
   search: async (query, page = 1) => {
     const response = await api.get("/tmdb/search/tv", {
       params: { query, language: "fr-FR", page },
@@ -155,7 +169,6 @@ export const tvAPI = {
     return response.data;
   },
 
-  // Séries populaires
   getPopular: async (page = 1) => {
     const response = await api.get("/tmdb/tv/popular", {
       params: { language: "fr-FR", page },
@@ -163,7 +176,29 @@ export const tvAPI = {
     return response.data;
   },
 
-  // Détails d'une série
+  // 🆕 DISCOVER - Filtres avancés pour séries
+  discover: async (filters = {}) => {
+    const params = {
+      language: "fr-FR",
+      sort_by: filters.sortBy || "popularity.desc",
+      page: filters.page || 1,
+      include_adult: false,
+      ...filters,
+    };
+
+    // Nettoyer les paramètres undefined/null
+    Object.keys(params).forEach(
+      (key) =>
+        (params[key] === undefined ||
+          params[key] === null ||
+          params[key] === "") &&
+        delete params[key]
+    );
+
+    const response = await api.get("/tmdb/discover/tv", { params });
+    return response.data;
+  },
+
   getDetails: async (id) => {
     const response = await api.get(`/tmdb/tv/${id}`, {
       params: { language: "fr-FR" },
@@ -171,7 +206,6 @@ export const tvAPI = {
     return response.data;
   },
 
-  // Crédits
   getCredits: async (id) => {
     const response = await api.get(`/tmdb/tv/${id}/credits`, {
       params: { language: "fr-FR" },
@@ -179,7 +213,6 @@ export const tvAPI = {
     return response.data;
   },
 
-  // Vidéos
   getVideos: async (id) => {
     const response = await api.get(`/tmdb/tv/${id}/videos`, {
       params: { language: "fr-FR" },
@@ -187,7 +220,6 @@ export const tvAPI = {
     return response.data;
   },
 
-  // Séries similaires
   getSimilar: async (id) => {
     const response = await api.get(`/tmdb/tv/${id}/similar`, {
       params: { language: "fr-FR" },
@@ -195,13 +227,11 @@ export const tvAPI = {
     return response.data;
   },
 
-  // Fournisseurs de streaming
   getWatchProviders: async (id) => {
     const response = await api.get(`/tmdb/tv/${id}/watch/providers`);
     return response.data;
   },
 
-  // Détails d'une saison
   getSeasonDetails: async (tvId, seasonNumber) => {
     const response = await api.get(`/tmdb/tv/${tvId}/season/${seasonNumber}`, {
       params: { language: "fr-FR" },
@@ -211,11 +241,10 @@ export const tvAPI = {
 };
 
 // ========================================
-// API PERSONNES
+// API PERSONNES (garder existant)
 // ========================================
 
 export const personAPI = {
-  // Détails d'une personne
   getDetails: async (id) => {
     const response = await api.get(`/tmdb/person/${id}`, {
       params: { language: "fr-FR" },
@@ -223,7 +252,6 @@ export const personAPI = {
     return response.data;
   },
 
-  // Filmographie
   getMovieCredits: async (id) => {
     const response = await api.get(`/tmdb/person/${id}/movie_credits`, {
       params: { language: "fr-FR" },
@@ -231,9 +259,5 @@ export const personAPI = {
     return response.data;
   },
 };
-
-// ========================================
-// EXPORT
-// ========================================
 
 export default api;

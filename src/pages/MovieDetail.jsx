@@ -1,11 +1,12 @@
-// src/pages/MovieDetail.jsx - VERSION MISE À JOUR
+// src/pages/MovieDetail.jsx - VERSION AVEC AVIS COMPLETS
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { movieAPI } from "../services/api"; // 👈 Import du service API
+import { movieAPI } from "../services/api";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
 import WatchProviders from "../components/WatchProviders";
+import ReviewsSection from "../components/ReviewsSection";
 import { useFavorites } from "../contexts/FavoritesContext";
 import Footer from "../components/Footer";
 
@@ -18,6 +19,7 @@ const MovieDetail = () => {
   const [similar, setSimilar] = useState([]);
   const [watchProviders, setWatchProviders] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [totalReviews, setTotalReviews] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { isMovieFavorite, toggleMovieFavorite } = useFavorites();
@@ -28,7 +30,6 @@ const MovieDetail = () => {
       setError(null);
 
       try {
-        // ✅ Utilisation du service API avec Promise.all
         const [
           movieData,
           creditsData,
@@ -50,7 +51,10 @@ const MovieDetail = () => {
         setVideos(videosData.results);
         setSimilar(similarData.results.slice(0, 6));
         setWatchProviders(providersData.results.FR || null);
-        setReviews(reviewsData.results.slice(0, 3));
+        setReviews(reviewsData.results);
+        setTotalReviews(
+          reviewsData.total_results || reviewsData.results.length
+        );
       } catch (err) {
         console.error("Error fetching movie details:", err);
         setError(err.message || "Impossible de charger les détails du film.");
@@ -175,28 +179,8 @@ const MovieDetail = () => {
 
             <WatchProviders providers={watchProviders} />
 
-            {reviews.length > 0 && (
-              <div className="reviews">
-                <h2>Avis des utilisateurs</h2>
-                {reviews.map((review) => (
-                  <div key={review.id} className="review-item">
-                    <div className="review-header">
-                      <strong>{review.author}</strong>
-                      {review.author_details.rating && (
-                        <span className="review-rating">
-                          ⭐ {review.author_details.rating}/10
-                        </span>
-                      )}
-                    </div>
-                    <p className="review-content">
-                      {review.content.length > 300
-                        ? review.content.substring(0, 300) + "..."
-                        : review.content}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
+            {/* 🆕 Section Avis Complète */}
+            <ReviewsSection reviews={reviews} totalReviews={totalReviews} />
 
             {credits && credits.cast.length > 0 && (
               <div className="cast">

@@ -9,6 +9,7 @@ import WatchProviders from "../components/WatchProviders";
 import Season from "../components/Season";
 import { useFavorites } from "../contexts/FavoritesContext";
 import Footer from "../components/Footer";
+import ReviewsSection from "../components/ReviewsSection";
 
 const TVDetail = () => {
   const { id } = useParams();
@@ -21,6 +22,8 @@ const TVDetail = () => {
   const [watchProviders, setWatchProviders] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [totalReviews, setTotalReviews] = useState(0);
 
   useEffect(() => {
     const fetchTVDetails = async () => {
@@ -28,24 +31,31 @@ const TVDetail = () => {
       setError(null);
 
       try {
-        // ✅ Utilisation du service API avec Promise.all
-        const [showData, creditsData, videosData, similarData, providersData] =
-          await Promise.all([
-            tvAPI.getDetails(id),
-            tvAPI.getCredits(id),
-            tvAPI.getVideos(id),
-            tvAPI.getSimilar(id),
-            tvAPI.getWatchProviders(id),
-          ]);
-
-        console.log("TV Show data:", showData);
-        console.log("Seasons:", showData.seasons);
+        const [
+          showData,
+          creditsData,
+          videosData,
+          similarData,
+          providersData,
+          reviewsData, // 🆕 Ajout
+        ] = await Promise.all([
+          tvAPI.getDetails(id),
+          tvAPI.getCredits(id),
+          tvAPI.getVideos(id),
+          tvAPI.getSimilar(id),
+          tvAPI.getWatchProviders(id),
+          tvAPI.getReviews(id), // 🆕 Ajout
+        ]);
 
         setShow(showData);
         setCredits(creditsData);
         setVideos(videosData.results);
         setSimilar(similarData.results.slice(0, 6));
         setWatchProviders(providersData.results.FR || null);
+        setReviews(reviewsData.results); // 🆕 Ajout
+        setTotalReviews(
+          reviewsData.total_results || reviewsData.results.length
+        ); // 🆕 Ajout
       } catch (err) {
         console.error("Error fetching TV details:", err);
         setError(
@@ -178,6 +188,7 @@ const TVDetail = () => {
             </div>
 
             <WatchProviders providers={watchProviders} />
+            <ReviewsSection reviews={reviews} totalReviews={totalReviews} />
 
             {/* Section Saisons */}
             {show.seasons && show.seasons.length > 0 && (

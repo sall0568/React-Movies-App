@@ -1,11 +1,12 @@
-// src/components/TVForm.jsx - VERSION MISE À JOUR
+// src/components/TVForm.jsx - VERSION AVEC DISCOVER
 import React, { useState, useEffect, useCallback } from "react";
 import { useDebounce } from "../hooks/useDebounce";
-import { tvAPI } from "../services/api"; // 👈 Import du service API
+import { tvAPI } from "../services/api";
 import TVCard from "./TVCard";
 import Loading from "./Loading";
 import ErrorMessage from "./ErrorMessage";
 import EmptyState from "./EmptyState";
+import AdvancedFiltersTVShows from "./AdvancedFiltersTVShows";
 
 const TVForm = () => {
   const [tvData, setTvData] = useState([]);
@@ -16,16 +17,56 @@ const TVForm = () => {
   const [minRating, setMinRating] = useState(0);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [advancedFilters, setAdvancedFilters] = useState({});
+  const [useDiscover, setUseDiscover] = useState(false);
 
   const debouncedSearch = useDebounce(search, 500);
 
-  // ✅ Fonction pour charger les séries populaires
+  // Fonction pour charger les séries avec Discover (filtres avancés)
+  const fetchDiscoverTV = useCallback(
+    async (pageNum = 1, filters = {}) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const discoverFilters = {
+          page: pageNum,
+          sort_by: filters.sort_by || "popularity.desc",
+          ...filters,
+        };
+
+        // Ajouter la note minimale
+        if (minRating > 0) {
+          discoverFilters["vote_average.gte"] = minRating;
+        }
+
+        const data = await tvAPI.discover(discoverFilters);
+
+        if (pageNum === 1) {
+          setTvData(data.results);
+        } else {
+          setTvData((prev) => [...prev, ...data.results]);
+        }
+
+        setHasMore(pageNum < data.total_pages);
+      } catch (err) {
+        console.error("Error fetching discover TV shows:", err);
+        setError(
+          err.message || "Impossible de charger les séries. Veuillez réessayer."
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [minRating]
+  );
+
+  // Fonction pour charger les séries populaires
   const fetchPopularTV = useCallback(async (pageNum = 1) => {
     setLoading(true);
     setError(null);
 
     try {
-      // 👇 Utilisation du service API
       const data = await tvAPI.getPopular(pageNum);
 
       if (pageNum === 1) {
@@ -45,11 +86,16 @@ const TVForm = () => {
     }
   }, []);
 
-  // ✅ Fonction pour rechercher des séries
+  // Fonction pour rechercher des séries
   const fetchTV = useCallback(
     async (searchTerm, pageNum = 1) => {
       if (!searchTerm.trim()) {
-        fetchPopularTV(pageNum);
+        // Si pas de recherche et filtres avancés activés, utiliser Discover
+        if (useDiscover || Object.keys(advancedFilters).length > 0) {
+          fetchDiscoverTV(pageNum, advancedFilters);
+        } else {
+          fetchPopularTV(pageNum);
+        }
         return;
       }
 
@@ -57,7 +103,6 @@ const TVForm = () => {
       setError(null);
 
       try {
-        // 👇 Utilisation du service API
         const data = await tvAPI.search(searchTerm, pageNum);
 
         if (pageNum === 1) {
@@ -76,31 +121,51 @@ const TVForm = () => {
         setLoading(false);
       }
     },
-    [fetchPopularTV]
+    [fetchPopularTV, fetchDiscoverTV, advancedFilters, useDiscover]
   );
 
-  // Charger les séries populaires au montage
+  // Charger les séries au montage
   useEffect(() => {
-    fetchPopularTV(1);
-  }, [fetchPopularTV]);
+    if (useDiscover || Object.keys(advancedFilters).length > 0) {
+      fetchDiscoverTV(1, advancedFilters);
+    } else {
+      fetchPopularTV(1);
+    }
+  }, [fetchPopularTV, fetchDiscoverTV, advancedFilters, useDiscover]);
 
+  // Réagir aux changements de recherche
   useEffect(() => {
     setPage(1);
     fetchTV(debouncedSearch, 1);
   }, [debouncedSearch, fetchTV]);
 
+  // Gérer les changements de filtres avancés
+  const handleAdvancedFiltersChange = (filters) => {
+    setAdvancedFilters(filters);
+    setUseDiscover(true);
+    setPage(1);
+    setSearch(""); // Réinitialiser la recherche
+  };
+
+  // Charger plus de séries
   const loadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
     if (debouncedSearch.trim()) {
       fetchTV(debouncedSearch, nextPage);
+    } else if (useDiscover || Object.keys(advancedFilters).length > 0) {
+      fetchDiscoverTV(nextPage, advancedFilters);
     } else {
       fetchPopularTV(nextPage);
     }
   };
 
+  // Filtrer et trier les séries localement
   const filteredTV = tvData
     .filter((show) => {
+      // Si on utilise Discover, les filtres sont déjà appliqués côté API
+      if (useDiscover) return true;
+
       if (show.vote_average < minRating) {
         return false;
       }
@@ -128,7 +193,10 @@ const TVForm = () => {
             placeholder="Rechercher une série..."
             id="search-input"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setUseDiscover(false); // Désactiver Discover lors de la recherche
+            }}
             aria-label="Rechercher une série"
           />
         </form>
@@ -166,12 +234,21 @@ const TVForm = () => {
               max="10"
               step="0.5"
               value={minRating}
-              onChange={(e) => setMinRating(Number(e.target.value))}
+              onChange={(e) => {
+                setMinRating(Number(e.target.value));
+                setPage(1);
+              }}
               aria-label="Note minimale"
             />
           </div>
         </div>
       </div>
+
+      {/* Filtres avancés pour séries */}
+      <AdvancedFiltersTVShows
+        onFilterChange={handleAdvancedFiltersChange}
+        initialFilters={advancedFilters}
+      />
 
       {error && (
         <ErrorMessage

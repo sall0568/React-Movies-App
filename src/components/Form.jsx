@@ -1,12 +1,13 @@
-// src/components/Form.jsx - VERSION MISE À JOUR
+// src/components/Form.jsx - VERSION AVEC DISCOVER
 import React, { useState, useEffect, useCallback } from "react";
 import { useDebounce } from "../hooks/useDebounce";
-import { movieAPI } from "../services/api"; // 👈 Import du service API
+import { movieAPI } from "../services/api";
 import Card from "./Card";
 import Loading from "./Loading";
 import ErrorMessage from "./ErrorMessage";
 import EmptyState from "./EmptyState";
 import GenreFilter from "./GenreFilter";
+import AdvancedFilters from "./AdvancedFilters";
 
 const Form = () => {
   const [moviesData, setMoviesData] = useState([]);
@@ -18,16 +19,61 @@ const Form = () => {
   const [minRating, setMinRating] = useState(0);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [advancedFilters, setAdvancedFilters] = useState({});
+  const [useDiscover, setUseDiscover] = useState(false);
 
   const debouncedSearch = useDebounce(search, 500);
 
-  // ✅ Fonction pour charger les films populaires
+  // Fonction pour charger les films avec Discover (filtres avancés)
+  const fetchDiscoverMovies = useCallback(
+    async (pageNum = 1, filters = {}) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const discoverFilters = {
+          page: pageNum,
+          sort_by: filters.sort_by || "popularity.desc",
+          ...filters,
+        };
+
+        // Ajouter le genre si sélectionné
+        if (selectedGenre) {
+          discoverFilters.with_genres = selectedGenre;
+        }
+
+        // Ajouter la note minimale
+        if (minRating > 0) {
+          discoverFilters["vote_average.gte"] = minRating;
+        }
+
+        const data = await movieAPI.discover(discoverFilters);
+
+        if (pageNum === 1) {
+          setMoviesData(data.results);
+        } else {
+          setMoviesData((prev) => [...prev, ...data.results]);
+        }
+
+        setHasMore(pageNum < data.total_pages);
+      } catch (err) {
+        console.error("Error fetching discover movies:", err);
+        setError(
+          err.message || "Impossible de charger les films. Veuillez réessayer."
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [selectedGenre, minRating]
+  );
+
+  // Fonction pour charger les films populaires
   const fetchPopularMovies = useCallback(async (pageNum = 1) => {
     setLoading(true);
     setError(null);
 
     try {
-      // 👇 Utilisation du service API au lieu d'axios direct
       const data = await movieAPI.getPopular(pageNum);
 
       if (pageNum === 1) {
@@ -47,11 +93,16 @@ const Form = () => {
     }
   }, []);
 
-  // ✅ Fonction pour rechercher des films
+  // Fonction pour rechercher des films
   const fetchMovies = useCallback(
     async (searchTerm, pageNum = 1) => {
       if (!searchTerm.trim()) {
-        fetchPopularMovies(pageNum);
+        // Si pas de recherche et filtres avancés activés, utiliser Discover
+        if (useDiscover || Object.keys(advancedFilters).length > 0) {
+          fetchDiscoverMovies(pageNum, advancedFilters);
+        } else {
+          fetchPopularMovies(pageNum);
+        }
         return;
       }
 
@@ -59,7 +110,6 @@ const Form = () => {
       setError(null);
 
       try {
-        // 👇 Utilisation du service API
         const data = await movieAPI.search(searchTerm, pageNum);
 
         if (pageNum === 1) {
@@ -78,31 +128,51 @@ const Form = () => {
         setLoading(false);
       }
     },
-    [fetchPopularMovies]
+    [fetchPopularMovies, fetchDiscoverMovies, advancedFilters, useDiscover]
   );
 
-  // Charger les films populaires au montage
+  // Charger les films au montage
   useEffect(() => {
-    fetchPopularMovies(1);
-  }, [fetchPopularMovies]);
+    if (useDiscover || Object.keys(advancedFilters).length > 0) {
+      fetchDiscoverMovies(1, advancedFilters);
+    } else {
+      fetchPopularMovies(1);
+    }
+  }, [fetchPopularMovies, fetchDiscoverMovies, advancedFilters, useDiscover]);
 
+  // Réagir aux changements de recherche
   useEffect(() => {
     setPage(1);
     fetchMovies(debouncedSearch, 1);
   }, [debouncedSearch, fetchMovies]);
 
+  // Gérer les changements de filtres avancés
+  const handleAdvancedFiltersChange = (filters) => {
+    setAdvancedFilters(filters);
+    setUseDiscover(true);
+    setPage(1);
+    setSearch(""); // Réinitialiser la recherche
+  };
+
+  // Charger plus de films
   const loadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
     if (debouncedSearch.trim()) {
       fetchMovies(debouncedSearch, nextPage);
+    } else if (useDiscover || Object.keys(advancedFilters).length > 0) {
+      fetchDiscoverMovies(nextPage, advancedFilters);
     } else {
       fetchPopularMovies(nextPage);
     }
   };
 
+  // Filtrer et trier les films localement
   const filteredMovies = moviesData
     .filter((movie) => {
+      // Si on utilise Discover, les filtres sont déjà appliqués côté API
+      if (useDiscover) return true;
+
       if (selectedGenre && !movie.genre_ids?.includes(selectedGenre)) {
         return false;
       }
@@ -133,7 +203,10 @@ const Form = () => {
             placeholder="Entrez le titre d'un film"
             id="search-input"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setUseDiscover(false); // Désactiver Discover lors de la recherche
+            }}
             aria-label="Rechercher un film"
           />
         </form>
@@ -164,7 +237,10 @@ const Form = () => {
 
           <GenreFilter
             selectedGenre={selectedGenre}
-            onGenreChange={setSelectedGenre}
+            onGenreChange={(genre) => {
+              setSelectedGenre(genre);
+              setPage(1);
+            }}
           />
 
           <div className="rating-filter">
@@ -176,12 +252,21 @@ const Form = () => {
               max="10"
               step="0.5"
               value={minRating}
-              onChange={(e) => setMinRating(Number(e.target.value))}
+              onChange={(e) => {
+                setMinRating(Number(e.target.value));
+                setPage(1);
+              }}
               aria-label="Note minimale"
             />
           </div>
         </div>
       </div>
+
+      {/* Filtres avancés */}
+      <AdvancedFilters
+        onFilterChange={handleAdvancedFiltersChange}
+        initialFilters={advancedFilters}
+      />
 
       {error && (
         <ErrorMessage

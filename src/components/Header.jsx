@@ -21,7 +21,7 @@ const Header = () => {
 
         <div className="logo-title-container">
           <img src="/android-chrome-192x192.png" alt="Logo du site CinéScope" />
-          <h1>CiNESCOPE</h1>
+          <h1>CINESCOPE</h1>
         </div>
 
         <nav className={menuOpen ? "nav-open" : ""}>
