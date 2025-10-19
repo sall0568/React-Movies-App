@@ -1,17 +1,17 @@
-// src/pages/TVDetail.jsx - VERSION MISE À JOUR
+// src/pages/TVDetail.jsx - VERSION MISE À JOUR avec avis complets
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { tvAPI } from "../services/api"; // 👈 Import du service API
+import { tvAPI } from "../services/api";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
 import WatchProviders from "../components/WatchProviders";
+import ReviewsSection from "../components/Reviewssection.jsx";
 import Season from "../components/Season";
 import { useFavorites } from "../contexts/FavoritesContext";
 import Footer from "../components/Footer";
-import ReviewsSection from "../components/ReviewsSection";
 
-const TVDetail = () => {
+function TVDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isTVFavorite, toggleTVFavorite } = useFavorites();
@@ -20,10 +20,10 @@ const TVDetail = () => {
   const [videos, setVideos] = useState([]);
   const [similar, setSimilar] = useState([]);
   const [watchProviders, setWatchProviders] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [totalReviews, setTotalReviews] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchTVDetails = async () => {
@@ -37,14 +37,14 @@ const TVDetail = () => {
           videosData,
           similarData,
           providersData,
-          reviewsData, // 🆕 Ajout
+          reviewsData,
         ] = await Promise.all([
           tvAPI.getDetails(id),
           tvAPI.getCredits(id),
           tvAPI.getVideos(id),
           tvAPI.getSimilar(id),
           tvAPI.getWatchProviders(id),
-          tvAPI.getReviews(id), // 🆕 Ajout
+          tvAPI.getReviews(id),
         ]);
 
         setShow(showData);
@@ -52,10 +52,10 @@ const TVDetail = () => {
         setVideos(videosData.results);
         setSimilar(similarData.results.slice(0, 6));
         setWatchProviders(providersData.results.FR || null);
-        setReviews(reviewsData.results); // 🆕 Ajout
+        setReviews(reviewsData.results);
         setTotalReviews(
           reviewsData.total_results || reviewsData.results.length
-        ); // 🆕 Ajout
+        );
       } catch (err) {
         console.error("Error fetching TV details:", err);
         setError(
@@ -188,6 +188,8 @@ const TVDetail = () => {
             </div>
 
             <WatchProviders providers={watchProviders} />
+
+            {/* 🆕 Section Avis Complète pour les séries */}
             <ReviewsSection reviews={reviews} totalReviews={totalReviews} />
 
             {/* Section Saisons */}
@@ -302,6 +304,6 @@ const TVDetail = () => {
       <Footer />
     </div>
   );
-};
+}
 
 export default TVDetail;
