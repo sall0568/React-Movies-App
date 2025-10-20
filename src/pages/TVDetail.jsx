@@ -6,7 +6,7 @@ import Header from "../components/Header";
 import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
 import WatchProviders from "../components/WatchProviders";
-import ReviewsSection from "../components/Reviewssection.jsx";
+import ReviewsSection from "../components/SectionReviews.jsx";
 import Season from "../components/Season";
 import { useFavorites } from "../contexts/FavoritesContext";
 import Footer from "../components/Footer";

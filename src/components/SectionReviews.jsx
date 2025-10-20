@@ -4,7 +4,6 @@ import {
   User,
   Calendar,
   Star,
-  ThumbsUp,
   Filter,
   ChevronDown,
   ChevronUp,
