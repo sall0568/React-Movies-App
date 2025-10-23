@@ -1,4 +1,4 @@
-// src/components/TVForm.jsx - VERSION AVEC DISCOVER
+// src/components/TVForm.jsx - VERSION OPTIMISÉE
 import React, { useState, useEffect, useCallback } from "react";
 import { useDebounce } from "../hooks/useDebounce";
 import { tvAPI } from "../services/api";
@@ -20,9 +20,10 @@ const TVForm = () => {
   const [advancedFilters, setAdvancedFilters] = useState({});
   const [useDiscover, setUseDiscover] = useState(false);
 
-  const debouncedSearch = useDebounce(search, 500);
+  // DEBOUNCE AUGMENTÉ À 800ms
+  const debouncedSearch = useDebounce(search, 800);
 
-  // Fonction pour charger les séries avec Discover (filtres avancés)
+  // Fonction pour charger les séries avec Discover
   const fetchDiscoverTV = useCallback(
     async (pageNum = 1, filters = {}) => {
       setLoading(true);
@@ -35,7 +36,6 @@ const TVForm = () => {
           ...filters,
         };
 
-        // Ajouter la note minimale
         if (minRating > 0) {
           discoverFilters["vote_average.gte"] = minRating;
         }
@@ -90,7 +90,6 @@ const TVForm = () => {
   const fetchTV = useCallback(
     async (searchTerm, pageNum = 1) => {
       if (!searchTerm.trim()) {
-        // Si pas de recherche et filtres avancés activés, utiliser Discover
         if (useDiscover || Object.keys(advancedFilters).length > 0) {
           fetchDiscoverTV(pageNum, advancedFilters);
         } else {
@@ -124,13 +123,17 @@ const TVForm = () => {
     [fetchPopularTV, fetchDiscoverTV, advancedFilters, useDiscover]
   );
 
-  // Charger les séries au montage
+  // Charger les séries au montage (OPTIMISÉ)
   useEffect(() => {
+    // Éviter les appels redondants
+    if (tvData.length > 0) return;
+
     if (useDiscover || Object.keys(advancedFilters).length > 0) {
       fetchDiscoverTV(1, advancedFilters);
     } else {
       fetchPopularTV(1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchPopularTV, fetchDiscoverTV, advancedFilters, useDiscover]);
 
   // Réagir aux changements de recherche
@@ -144,7 +147,7 @@ const TVForm = () => {
     setAdvancedFilters(filters);
     setUseDiscover(true);
     setPage(1);
-    setSearch(""); // Réinitialiser la recherche
+    setSearch("");
   };
 
   // Charger plus de séries
@@ -163,7 +166,6 @@ const TVForm = () => {
   // Filtrer et trier les séries localement
   const filteredTV = tvData
     .filter((show) => {
-      // Si on utilise Discover, les filtres sont déjà appliqués côté API
       if (useDiscover) return true;
 
       if (show.vote_average < minRating) {
@@ -195,7 +197,7 @@ const TVForm = () => {
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
-              setUseDiscover(false); // Désactiver Discover lors de la recherche
+              setUseDiscover(false);
             }}
             aria-label="Rechercher une série"
           />
@@ -244,7 +246,6 @@ const TVForm = () => {
         </div>
       </div>
 
-      {/* Filtres avancés pour séries */}
       <AdvancedFiltersTVShows
         onFilterChange={handleAdvancedFiltersChange}
         initialFilters={advancedFilters}

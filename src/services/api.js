@@ -1,4 +1,4 @@
-// src/services/api.js - VERSION AVEC CACHE
+// src/services/api.js - VERSION OPTIMISÉE AVEC RETRY
 import axios from "axios";
 import apiCache from "../utils/cache";
 
@@ -13,32 +13,53 @@ const api = axios.create({
   },
 });
 
-// ===== FONCTION HELPER POUR LES REQUÊTES AVEC CACHE =====
-const cachedRequest = async (endpoint, params = {}, useCache = true) => {
-  // Générer une clé de cache
+// ===== FONCTION HELPER AVEC CACHE ET RETRY AUTOMATIQUE =====
+const cachedRequest = async (
+  endpoint,
+  params = {},
+  useCache = true,
+  retries = 2
+) => {
   const cacheKey = apiCache.generateKey(endpoint, params);
 
-  // Vérifier le cache si activé
+  // Vérifier le cache
   if (useCache) {
     const cachedData = apiCache.get(cacheKey);
     if (cachedData) {
-      return cachedData; // Retourner les données en cache
+      return cachedData;
     }
   }
 
-  // Faire la requête API
-  console.log(`🌐 API Request: ${endpoint}`);
-  const response = await api.get(endpoint, { params });
+  // Faire la requête avec retry automatique
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      console.log(
+        `🌐 API Request: ${endpoint} (tentative ${attempt + 1}/${retries + 1})`
+      );
+      const response = await api.get(endpoint, { params });
 
-  // Sauvegarder dans le cache
-  if (useCache) {
-    apiCache.set(cacheKey, response.data);
+      // Sauvegarder dans le cache
+      if (useCache) {
+        apiCache.set(cacheKey, response.data);
+      }
+
+      return response.data;
+    } catch (error) {
+      // Si erreur 429 et qu'il reste des tentatives
+      if (error.response?.status === 429 && attempt < retries) {
+        const waitTime = (attempt + 1) * 3000; // 3s, 6s
+        console.log(`⏳ Rate limit atteint, attente de ${waitTime}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, waitTime));
+        continue;
+      }
+
+      // Dernière tentative ou autre erreur
+      throw error;
+    }
   }
-
-  return response.data;
 };
 
-// Intercepteurs (garder ceux existants)
+// Intercepteurs
 api.interceptors.request.use(
   (config) => {
     console.log(`🔵 API Request: ${config.method.toUpperCase()} ${config.url}`);
@@ -65,7 +86,7 @@ api.interceptors.response.use(
         case 429:
           return Promise.reject(
             new Error(
-              "Trop de requêtes. Données en cache utilisées ou veuillez patienter 10 secondes."
+              "Trop de requêtes. Les données en cache sont utilisées. Veuillez patienter."
             )
           );
         case 404:
@@ -98,7 +119,6 @@ api.interceptors.response.use(
 // ========================================
 
 export const movieAPI = {
-  // Recherche de films
   search: async (query, page = 1) => {
     return await cachedRequest("/tmdb/search/movie", {
       query,
@@ -107,7 +127,6 @@ export const movieAPI = {
     });
   },
 
-  // Films populaires (now_playing)
   getPopular: async (page = 1) => {
     return await cachedRequest("/tmdb/movie/now_playing", {
       language: "fr-FR",
@@ -115,7 +134,6 @@ export const movieAPI = {
     });
   },
 
-  // DISCOVER - Filtres avancés
   discover: async (filters = {}) => {
     const params = {
       language: "fr-FR",
@@ -137,38 +155,32 @@ export const movieAPI = {
     return await cachedRequest("/tmdb/discover/movie", params);
   },
 
-  // Détails d'un film
   getDetails: async (id) => {
     return await cachedRequest(`/tmdb/movie/${id}`, { language: "fr-FR" });
   },
 
-  // Crédits (casting)
   getCredits: async (id) => {
     return await cachedRequest(`/tmdb/movie/${id}/credits`, {
       language: "fr-FR",
     });
   },
 
-  // Vidéos (bandes-annonces)
   getVideos: async (id) => {
     return await cachedRequest(`/tmdb/movie/${id}/videos`, {
       language: "fr-FR",
     });
   },
 
-  // Films similaires
   getSimilar: async (id) => {
     return await cachedRequest(`/tmdb/movie/${id}/similar`, {
       language: "fr-FR",
     });
   },
 
-  // Fournisseurs de streaming
   getWatchProviders: async (id) => {
     return await cachedRequest(`/tmdb/movie/${id}/watch/providers`);
   },
 
-  // Avis utilisateurs
   getReviews: async (id) => {
     return await cachedRequest(`/tmdb/movie/${id}/reviews`, {
       language: "fr-FR",

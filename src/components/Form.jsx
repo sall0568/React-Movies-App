@@ -1,4 +1,4 @@
-// src/components/Form.jsx - VERSION AVEC DISCOVER
+// src/components/Form.jsx - VERSION OPTIMISÉE
 import React, { useState, useEffect, useCallback } from "react";
 import { useDebounce } from "../hooks/useDebounce";
 import { movieAPI } from "../services/api";
@@ -22,9 +22,10 @@ const Form = () => {
   const [advancedFilters, setAdvancedFilters] = useState({});
   const [useDiscover, setUseDiscover] = useState(false);
 
-  const debouncedSearch = useDebounce(search, 500);
+  // DEBOUNCE AUGMENTÉ À 800ms pour réduire les requêtes
+  const debouncedSearch = useDebounce(search, 800);
 
-  // Fonction pour charger les films avec Discover (filtres avancés)
+  // Fonction pour charger les films avec Discover
   const fetchDiscoverMovies = useCallback(
     async (pageNum = 1, filters = {}) => {
       setLoading(true);
@@ -37,12 +38,10 @@ const Form = () => {
           ...filters,
         };
 
-        // Ajouter le genre si sélectionné
         if (selectedGenre) {
           discoverFilters.with_genres = selectedGenre;
         }
 
-        // Ajouter la note minimale
         if (minRating > 0) {
           discoverFilters["vote_average.gte"] = minRating;
         }
@@ -97,7 +96,6 @@ const Form = () => {
   const fetchMovies = useCallback(
     async (searchTerm, pageNum = 1) => {
       if (!searchTerm.trim()) {
-        // Si pas de recherche et filtres avancés activés, utiliser Discover
         if (useDiscover || Object.keys(advancedFilters).length > 0) {
           fetchDiscoverMovies(pageNum, advancedFilters);
         } else {
@@ -131,13 +129,17 @@ const Form = () => {
     [fetchPopularMovies, fetchDiscoverMovies, advancedFilters, useDiscover]
   );
 
-  // Charger les films au montage
+  // Charger les films au montage (OPTIMISÉ - évite les appels redondants)
   useEffect(() => {
+    // Ne charger que si aucun film n'est présent
+    if (moviesData.length > 0) return;
+
     if (useDiscover || Object.keys(advancedFilters).length > 0) {
       fetchDiscoverMovies(1, advancedFilters);
     } else {
       fetchPopularMovies(1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchPopularMovies, fetchDiscoverMovies, advancedFilters, useDiscover]);
 
   // Réagir aux changements de recherche
@@ -151,7 +153,7 @@ const Form = () => {
     setAdvancedFilters(filters);
     setUseDiscover(true);
     setPage(1);
-    setSearch(""); // Réinitialiser la recherche
+    setSearch("");
   };
 
   // Charger plus de films
@@ -170,7 +172,6 @@ const Form = () => {
   // Filtrer et trier les films localement
   const filteredMovies = moviesData
     .filter((movie) => {
-      // Si on utilise Discover, les filtres sont déjà appliqués côté API
       if (useDiscover) return true;
 
       if (selectedGenre && !movie.genre_ids?.includes(selectedGenre)) {
@@ -205,7 +206,7 @@ const Form = () => {
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
-              setUseDiscover(false); // Désactiver Discover lors de la recherche
+              setUseDiscover(false);
             }}
             aria-label="Rechercher un film"
           />
@@ -262,7 +263,6 @@ const Form = () => {
         </div>
       </div>
 
-      {/* Filtres avancés */}
       <AdvancedFilters
         onFilterChange={handleAdvancedFiltersChange}
         initialFilters={advancedFilters}

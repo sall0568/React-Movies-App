@@ -1,8 +1,8 @@
-// src/utils/cache.js - Nouveau fichier à créer
+// src/utils/cache.js - VERSION OPTIMISÉE
 
 class APICache {
-  constructor(expirationTime = 5 * 60 * 1000) {
-    // 5 minutes par défaut
+  constructor(expirationTime = 30 * 60 * 1000) {
+    // 30 minutes (AUGMENTÉ)
     this.cache = new Map();
     this.expirationTime = expirationTime;
   }
@@ -28,13 +28,13 @@ class APICache {
       return null;
     }
 
-    console.log(`✅ Cache HIT: ${key}`);
+    console.log(`✅ Cache HIT: ${key.substring(0, 50)}...`);
     return item.data;
   }
 
   // Sauvegarder dans le cache
   set(key, data) {
-    console.log(`💾 Cache SET: ${key}`);
+    console.log(`💾 Cache SET: ${key.substring(0, 50)}...`);
     this.cache.set(key, {
       data,
       expiry: Date.now() + this.expirationTime,
@@ -76,12 +76,12 @@ class APICache {
   }
 }
 
-// Créer une instance singleton
-const apiCache = new APICache(10 * 60 * 1000); // 10 minutes
+// Créer une instance singleton avec 30 minutes de cache
+const apiCache = new APICache(30 * 60 * 1000);
 
-// Nettoyer le cache toutes les 5 minutes
+// Nettoyer le cache toutes les 15 minutes
 setInterval(() => {
   apiCache.cleanup();
-}, 5 * 60 * 1000);
+}, 15 * 60 * 1000);
 
 export default apiCache;
