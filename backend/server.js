@@ -1,4 +1,4 @@
-// backend/server.js
+// backend/server.js - VERSION OPTIMISÉE
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
@@ -15,7 +15,7 @@ const corsOptions = {
   origin:
     process.env.NODE_ENV === "production"
       ? [
-          "https://moviereverse.netlify.app", // ⬅️ Remplacez par votre URL
+          "https://moviereverse.netlify.app",
           "https://www.moviereverse.netlify.app",
         ]
       : ["http://localhost:3000", "http://127.0.0.1:3000"],
@@ -28,14 +28,18 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 // ========================================
-// RATE LIMITING (Protection anti-abus)
+// RATE LIMITING OPTIMISÉ
 // ========================================
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 100 requêtes max par IP
+  max: 500, // 500 requêtes max par IP (AUGMENTÉ)
   message: { error: "Trop de requêtes. Réessayez dans 15 minutes." },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => {
+    // Ne pas limiter les requêtes en cache
+    return req.headers["x-cache-hit"] === "true";
+  },
 });
 
 app.use("/api/", limiter);
@@ -46,7 +50,6 @@ app.use("/api/", limiter);
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 
-// Vérification de la clé API au démarrage
 if (!TMDB_API_KEY) {
   console.error("❌ ERREUR: TMDB_API_KEY manquante dans .env");
   process.exit(1);
@@ -73,12 +76,10 @@ app.get("/health", (req, res) => {
   });
 });
 
-// Route proxy générique pour TMDB (compatible Express 5)
+// Route proxy générique pour TMDB
 app.get(/^\/api\/tmdb\/(.*)/, async (req, res) => {
   try {
-    // req.params[0] contient tout ce qui suit /api/tmdb/
     const tmdbPath = req.params[0];
-
     const tmdbUrl = `${TMDB_BASE_URL}/${tmdbPath}`;
     const params = { ...req.query, api_key: TMDB_API_KEY };
 
@@ -108,10 +109,6 @@ app.get(/^\/api\/tmdb\/(.*)/, async (req, res) => {
     }
   }
 });
-
-// ========================================
-// ROUTES SPÉCIFIQUES (Optionnel - Plus performant)
-// ========================================
 
 // Films populaires
 app.get("/api/movies/popular", async (req, res) => {
@@ -230,6 +227,7 @@ app.listen(PORT, () => {
   console.log(`📍 URL: http://localhost:${PORT}`);
   console.log(`🌍 Environnement: ${process.env.NODE_ENV || "development"}`);
   console.log(`🔑 API Key: ${TMDB_API_KEY ? "✓ Configurée" : "✗ Manquante"}`);
+  console.log(`⚡ Rate Limit: 500 requêtes / 15 minutes`);
   console.log("=".repeat(50) + "\n");
 });
 
