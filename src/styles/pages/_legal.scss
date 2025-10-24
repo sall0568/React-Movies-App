@@ -953,18 +953,54 @@
         .legal-content,
         .about-content {
             padding: 20px 15px;
+            overflow-x: hidden; // ✅ Empêcher le débordement horizontal
 
             h1 {
                 font-size: 2.2rem;
+                word-wrap: break-word; // ✅ Casser les longs mots
             }
 
             section {
                 h2 {
                     font-size: 1.7rem;
+                    word-wrap: break-word;
                 }
 
                 h3 {
                     font-size: 1.3rem;
+                    word-wrap: break-word;
+                }
+
+                h4 {
+                    font-size: 1.1rem;
+                    word-wrap: break-word;
+                }
+
+                p {
+                    font-size: 1rem;
+                    word-wrap: break-word;
+                    overflow-wrap: break-word; // ✅ Casser les URLs longues
+                }
+
+                ul,
+                ol {
+                    padding-left: 20px; // ✅ Réduire le padding
+
+                    li {
+                        font-size: 1rem;
+                        word-wrap: break-word;
+                    }
+                }
+
+                a {
+                    word-break: break-all; // ✅ Casser les liens longs
+                    display: inline-block;
+                    max-width: 100%;
+                }
+
+                code {
+                    word-break: break-all;
+                    white-space: pre-wrap;
                 }
             }
 
@@ -972,13 +1008,86 @@
                 grid-template-columns: 1fr;
             }
 
+            // ✅ Table responsive
             .cookies-table {
-                font-size: 0.9rem;
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                font-size: 0.85rem;
+                max-width: 100%;
 
-                th,
-                td {
+                thead {
+                    display: none; // Masquer les en-têtes sur mobile
+                }
+
+                tbody {
+                    display: block;
+                }
+
+                tr {
+                    display: block;
+                    margin-bottom: 15px;
+                    border: 2px solid var(--color-border);
+                    border-radius: 10px;
                     padding: 10px;
                 }
+
+                td {
+                    display: block;
+                    text-align: left;
+                    padding: 8px 5px;
+                    border: none;
+
+                    &:before {
+                        content: attr(data-label);
+                        font-weight: bold;
+                        display: inline-block;
+                        margin-right: 10px;
+                        color: var(--color-text);
+                    }
+                }
+            }
+
+            // ✅ Info boxes responsive
+            .info-box,
+            .tmdb-attribution-legal,
+            .tmdb-box,
+            .disclaimer-box,
+            .acceptance-box {
+                padding: 15px;
+                margin: 20px -15px; // ✅ Utiliser toute la largeur
+                border-radius: 0;
+                max-width: 100vw;
+                box-sizing: border-box;
+
+                img {
+                    max-width: 100%;
+                    height: auto;
+                }
+
+                p {
+                    font-size: 0.95rem;
+                }
+
+                ul {
+                    padding-left: 15px;
+
+                    li {
+                        font-size: 0.9rem;
+                    }
+                }
+            }
+
+            // ✅ Grilles responsive
+            .tech-grid,
+            .features {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .thanks-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
             }
         }
     }
@@ -989,11 +1098,12 @@
             margin: -20px -15px 30px;
 
             h1 {
-                font-size: 2.5rem;
+                font-size: 2rem;
+                word-wrap: break-word;
             }
 
             .tagline {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
             }
         }
 
@@ -1001,18 +1111,40 @@
             .developer-card {
                 flex-direction: column;
                 text-align: center;
-                padding: 30px 20px;
+                padding: 20px 15px;
+
+                .developer-info {
+                    .developer-links {
+                        flex-direction: column;
+                        gap: 10px;
+
+                        .dev-link {
+                            width: 100%;
+                            justify-content: center;
+                        }
+                    }
+                }
             }
         }
 
         .contact-section {
             .contact-buttons {
                 flex-direction: column;
+                gap: 10px;
 
                 .contact-btn {
                     width: 100%;
                     justify-content: center;
                 }
+            }
+        }
+
+        .features-grid,
+        .tech-stack {
+
+            .features,
+            .tech-grid {
+                grid-template-columns: 1fr;
             }
         }
     }
@@ -1023,6 +1155,70 @@
         .footer-content {
             grid-template-columns: 1fr;
             gap: 30px;
+
+            .footer-section {
+                .tmdb-logo {
+                    max-width: 150px;
+                }
+            }
+        }
+
+        .footer-bottom {
+            p {
+                font-size: 0.85rem;
+                word-wrap: break-word;
+            }
+        }
+    }
+}
+
+// ✅ NOUVEAU : Extra small screens (< 480px)
+@media (max-width: 480px) {
+
+    .legal-page,
+    .about-page {
+
+        .legal-content,
+        .about-content {
+            padding: 15px 10px;
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            section {
+                h2 {
+                    font-size: 1.5rem;
+                }
+
+                h3 {
+                    font-size: 1.2rem;
+                }
+
+                p,
+                li {
+                    font-size: 0.95rem;
+                }
+            }
+
+            .summary-box,
+            .info-box,
+            .tmdb-attribution-legal {
+                padding: 12px;
+                margin: 15px -10px;
+            }
+        }
+    }
+
+    .about-page {
+        .about-hero {
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            .tagline {
+                font-size: 1rem;
+            }
         }
     }
 }
