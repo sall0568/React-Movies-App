@@ -1,7 +1,7 @@
-// src/contexts/FavoritesContext.js - VERSION MISE À JOUR
+// src/contexts/FavoritesContext.js - VERSION CORRIGÉE
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { movieAPI, tvAPI } from "../services/api"; // 👈 Import du service
+import { movieAPI, tvAPI } from "../services/api";
 
 const FavoritesContext = createContext();
 
@@ -27,30 +27,45 @@ export const FavoritesProvider = ({ children }) => {
   const [favoriteTVShows, setFavoriteTVShows] = useState([]);
   const [loadingTV, setLoadingTV] = useState(false);
 
+  // ✅ CORRECTION : Charger immédiatement au montage
+  const [isInitialized, setIsInitialized] = useState(false);
+
   // ✅ Charger les détails des films favoris
   useEffect(() => {
     const fetchFavoriteMovies = async () => {
       if (favoriteMovieIds.length === 0) {
         setFavoriteMovies([]);
+        setIsInitialized(true);
         return;
       }
 
       setLoadingMovies(true);
 
       try {
-        // 👇 Utilisation du service API
-        const promises = favoriteMovieIds.map((id) => movieAPI.getDetails(id));
+        console.log(
+          `🎬 Chargement de ${favoriteMovieIds.length} films favoris...`
+        );
+        const promises = favoriteMovieIds.map((id) =>
+          movieAPI.getDetails(id).catch((err) => {
+            console.error(`Erreur film ${id}:`, err);
+            return null;
+          })
+        );
         const movies = await Promise.all(promises);
-        setFavoriteMovies(movies);
+        // Filtrer les films null (erreurs)
+        const validMovies = movies.filter((m) => m !== null);
+        setFavoriteMovies(validMovies);
+        console.log(`✅ ${validMovies.length} films favoris chargés`);
       } catch (error) {
         console.error("Error fetching favorite movies:", error);
       } finally {
         setLoadingMovies(false);
+        setIsInitialized(true);
       }
     };
 
     fetchFavoriteMovies();
-  }, [favoriteMovieIds]);
+  }, [favoriteMovieIds]); // ✅ Se déclenche à chaque changement
 
   // ✅ Charger les détails des séries favorites
   useEffect(() => {
@@ -63,10 +78,20 @@ export const FavoritesProvider = ({ children }) => {
       setLoadingTV(true);
 
       try {
-        // 👇 Utilisation du service API
-        const promises = favoriteTVIds.map((id) => tvAPI.getDetails(id));
+        console.log(
+          `📺 Chargement de ${favoriteTVIds.length} séries favorites...`
+        );
+        const promises = favoriteTVIds.map((id) =>
+          tvAPI.getDetails(id).catch((err) => {
+            console.error(`Erreur série ${id}:`, err);
+            return null;
+          })
+        );
         const shows = await Promise.all(promises);
-        setFavoriteTVShows(shows);
+        // Filtrer les séries null (erreurs)
+        const validShows = shows.filter((s) => s !== null);
+        setFavoriteTVShows(validShows);
+        console.log(`✅ ${validShows.length} séries favorites chargées`);
       } catch (error) {
         console.error("Error fetching favorite TV shows:", error);
       } finally {
@@ -75,16 +100,18 @@ export const FavoritesProvider = ({ children }) => {
     };
 
     fetchFavoriteTVShows();
-  }, [favoriteTVIds]);
+  }, [favoriteTVIds]); // ✅ Se déclenche à chaque changement
 
   // Fonctions pour les films
   const addMovieFavorite = (movieId) => {
     if (!favoriteMovieIds.includes(movieId)) {
+      console.log(`💖 Ajout du film ${movieId} aux favoris`);
       setFavoriteMovieIds([...favoriteMovieIds, movieId]);
     }
   };
 
   const removeMovieFavorite = (movieId) => {
+    console.log(`💔 Retrait du film ${movieId} des favoris`);
     setFavoriteMovieIds(favoriteMovieIds.filter((id) => id !== movieId));
   };
 
@@ -103,11 +130,13 @@ export const FavoritesProvider = ({ children }) => {
   // Fonctions pour les séries
   const addTVFavorite = (tvId) => {
     if (!favoriteTVIds.includes(tvId)) {
+      console.log(`💖 Ajout de la série ${tvId} aux favoris`);
       setFavoriteTVIds([...favoriteTVIds, tvId]);
     }
   };
 
   const removeTVFavorite = (tvId) => {
+    console.log(`💔 Retrait de la série ${tvId} des favoris`);
     setFavoriteTVIds(favoriteTVIds.filter((id) => id !== tvId));
   };
 
@@ -147,6 +176,7 @@ export const FavoritesProvider = ({ children }) => {
 
     // Global
     totalFavorites,
+    isInitialized, // ✅ Nouveau : indique si le chargement initial est terminé
 
     // Backward compatibility
     favoriteIds: [...favoriteMovieIds, ...favoriteTVIds],

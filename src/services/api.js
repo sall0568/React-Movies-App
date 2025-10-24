@@ -1,4 +1,4 @@
-// src/services/api.js - VERSION OPTIMISÉE AVEC RETRY
+// src/services/api.js - VERSION CORRIGÉE avec Keep-Alive
 import axios from "axios";
 import apiCache from "../utils/cache";
 
@@ -7,19 +7,44 @@ const API_BASE_URL =
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 15000,
+  timeout: 30000, // AUGMENTÉ à 30s pour le réveil du serveur
   headers: {
     "Content-Type": "application/json",
   },
 });
 
+// ===== KEEP-ALIVE : Ping toutes les 10 minutes =====
+let keepAliveInterval = null;
+
+const startKeepAlive = () => {
+  if (keepAliveInterval) return;
+
+  keepAliveInterval = setInterval(async () => {
+    try {
+      await axios.get(`${API_BASE_URL.replace('/api', '')}/health`, {
+        timeout: 5000,
+      });
+      console.log('🔄 Keep-alive ping envoyé');
+    } catch (error) {
+      console.log('⚠️ Keep-alive ping échoué (normal si serveur en veille)');
+    }
+  }, 10 * 60 * 1000); // Toutes les 10 minutes
+};
+
+// Démarrer le keep-alive au chargement
+if (typeof window !== 'undefined') {
+  startKeepAlive();
+  
+  // Arrêter lors de la fermeture de la page
+  window.addEventListener('beforeunload', () => {
+    if (keepAliveInterval) {
+      clearInterval(keepAliveInterval);
+    }
+  });
+}
+
 // ===== FONCTION HELPER AVEC CACHE ET RETRY AUTOMATIQUE =====
-const cachedRequest = async (
-  endpoint,
-  params = {},
-  useCache = true,
-  retries = 2
-) => {
+const cachedRequest = async (endpoint, params = {}, useCache = true, retries = 3) => {
   const cacheKey = apiCache.generateKey(endpoint, params);
 
   // Vérifier le cache
@@ -33,9 +58,7 @@ const cachedRequest = async (
   // Faire la requête avec retry automatique
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      console.log(
-        `🌐 API Request: ${endpoint} (tentative ${attempt + 1}/${retries + 1})`
-      );
+      console.log(`🌐 API Request: ${endpoint} (tentative ${attempt + 1}/${retries + 1})`);
       const response = await api.get(endpoint, { params });
 
       // Sauvegarder dans le cache
@@ -45,16 +68,28 @@ const cachedRequest = async (
 
       return response.data;
     } catch (error) {
-      // Si erreur 429 et qu'il reste des tentatives
-      if (error.response?.status === 429 && attempt < retries) {
-        const waitTime = (attempt + 1) * 3000; // 3s, 6s
+      const isLastAttempt = attempt === retries;
+      
+      // Si erreur 429 (rate limit)
+      if (error.response?.status === 429 && !isLastAttempt) {
+        const waitTime = (attempt + 1) * 3000;
         console.log(`⏳ Rate limit atteint, attente de ${waitTime}ms...`);
-        await new Promise((resolve) => setTimeout(resolve, waitTime));
+        await new Promise(resolve => setTimeout(resolve, waitTime));
         continue;
       }
-
+      
+      // Si erreur réseau ou timeout (serveur en veille)
+      if ((error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK' || !error.response) && !isLastAttempt) {
+        const waitTime = (attempt + 1) * 5000; // 5s, 10s, 15s
+        console.log(`🔄 Serveur en veille, réveil en cours... attente de ${waitTime}ms`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+      
       // Dernière tentative ou autre erreur
-      throw error;
+      if (isLastAttempt) {
+        throw error;
+      }
     }
   }
 };
@@ -105,7 +140,7 @@ api.interceptors.response.use(
     } else if (error.request) {
       return Promise.reject(
         new Error(
-          "Impossible de contacter le serveur. Vérifiez votre connexion."
+          "Le serveur est en train de se réveiller, veuillez patienter quelques secondes..."
         )
       );
     } else {
