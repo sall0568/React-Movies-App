@@ -1,18 +1,25 @@
+// src/pages/LikePage.jsx - AVEC SCROLL TO TOP
 import React, { useState } from "react";
 import Header from "../components/Header";
 import Card from "../components/Card";
 import TVCard from "../components/TVCard";
 import Loading from "../components/Loading";
 import EmptyState from "../components/EmptyState";
+import ScrollToTop from "../components/ScrollToTop";
 import { useFavorites } from "../contexts/FavoritesContext";
 import Footer from "../components/Footer";
 
 const LikePage = () => {
-  const { favoriteMovies, favoriteTVShows, loadingMovies, loadingTV } =
-    useFavorites();
+  const {
+    favoriteMovies,
+    favoriteTVShows,
+    loadingMovies,
+    loadingTV,
+    isInitialized,
+  } = useFavorites();
 
   const [sortBy, setSortBy] = useState("date");
-  const [activeTab, setActiveTab] = useState("all"); // all, movies, tv
+  const [activeTab, setActiveTab] = useState("all");
 
   const sortItems = (items) => {
     return [...items].sort((a, b) => {
@@ -37,6 +44,7 @@ const LikePage = () => {
 
   const totalFavorites = favoriteMovies.length + favoriteTVShows.length;
   const loading = loadingMovies || loadingTV;
+  const showLoading = !isInitialized && loading;
 
   return (
     <div className="user-list-page">
@@ -86,7 +94,7 @@ const LikePage = () => {
         </div>
       )}
 
-      {loading ? (
+      {showLoading ? (
         <Loading />
       ) : totalFavorites === 0 ? (
         <EmptyState
@@ -130,6 +138,7 @@ const LikePage = () => {
         </>
       )}
       <Footer />
+      <ScrollToTop />
     </div>
   );
 };

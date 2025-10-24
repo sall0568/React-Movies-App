@@ -1,4 +1,4 @@
-// src/pages/MovieDetail.jsx - VERSION AVEC AVIS COMPLETS
+// src/pages/MovieDetail.jsx - AVEC SCROLL TO TOP
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { movieAPI } from "../services/api";
@@ -7,6 +7,7 @@ import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
 import WatchProviders from "../components/WatchProviders";
 import ReviewsSection from "../components/SectionReviews";
+import ScrollToTop from "../components/ScrollToTop";
 import { useFavorites } from "../contexts/FavoritesContext";
 import Footer from "../components/Footer";
 
@@ -179,7 +180,6 @@ const MovieDetail = () => {
 
             <WatchProviders providers={watchProviders} />
 
-            {/* 🆕 Section Avis Complète */}
             <ReviewsSection reviews={reviews} totalReviews={totalReviews} />
 
             {credits && credits.cast.length > 0 && (
@@ -252,6 +252,7 @@ const MovieDetail = () => {
         </div>
       </div>
       <Footer />
+      <ScrollToTop />
     </div>
   );
 };
