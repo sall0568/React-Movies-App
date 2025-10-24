@@ -1,3 +1,37 @@
-# https://www.robotstxt.org/robotstxt.html
+# robots.txt pour CinéScope - Optimisation SEO
+
+# Autoriser tous les robots
 User-agent: *
-Disallow:
+Allow: /
+
+# Autoriser spécifiquement Googlebot
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Autoriser Bingbot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 0
+
+# Bloquer les mauvais robots (scrapers, spam)
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+# Bloquer les fichiers inutiles pour le SEO
+Disallow: /static/js/
+Disallow: /static/css/
+Disallow: /*.json$
+Disallow: /*.map$
+
+# SITEMAP - TRÈS IMPORTANT pour SEO
+Sitemap: https://moviereverse.netlify.app/sitemap.xml

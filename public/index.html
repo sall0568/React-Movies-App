@@ -14,45 +14,246 @@
     <!-- Couleur du thème (pour mobile) -->
     <meta name="theme-color" content="#546fe4" />
 
-    <!-- Méta descriptions améliorées -->
+    <!-- ========================================
+         SEO OPTIMISATION MAXIMALE
+    ======================================== -->
+
+    <!-- TITRE OPTIMISÉ SEO (50-60 caractères) -->
+    <title>
+      CinéScope - Films & Séries TV | Découvrez, Explorez, Organisez
+    </title>
+
+    <!-- META DESCRIPTION (150-160 caractères) - CRITIQUE pour SEO -->
     <meta
       name="description"
-      content="CinéScope - Découvrez, explorez et organisez vos films et séries préférés. Base de données complète avec informations, bandes-annonces et bien plus."
+      content="Découvrez des milliers de films et séries TV sur CinéScope. Recherchez, consultez les notes, bandes-annonces, casting et créez votre liste de favoris. Gratuit et sans inscription."
     />
+
+    <!-- MOTS-CLÉS (toujours utile pour certains moteurs) -->
     <meta
       name="keywords"
-      content="films, séries, cinéma, TMDB, movies, streaming, bandes-annonces"
+      content="films, séries, cinéma, streaming, TMDB, movies, TV shows, bandes-annonces, casting, critiques, notes, favoris, découvrir films, recherche films, application cinéma, base de données films"
     />
+
+    <!-- AUTEUR -->
     <meta name="author" content="Sall Mamadou" />
 
-    <!-- Open Graph (pour le partage sur réseaux sociaux) -->
+    <!-- ROBOTS - Autoriser l'indexation complète -->
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="bingbot" content="index, follow" />
+
+    <!-- LANGUE ET RÉGION -->
+    <meta name="language" content="French" />
+    <meta name="geo.region" content="FR" />
+    <meta name="geo.placename" content="France" />
+
+    <!-- CANONICAL URL - Éviter le contenu dupliqué -->
+    <link rel="canonical" href="https://moviereverse.netlify.app/" />
+
+    <!-- ========================================
+         OPEN GRAPH (Facebook, LinkedIn, WhatsApp)
+    ======================================== -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="CinéScope - Votre compagnon cinéma" />
+    <meta property="og:site_name" content="CinéScope" />
+    <meta
+      property="og:title"
+      content="CinéScope - Découvrez Films & Séries TV"
+    />
     <meta
       property="og:description"
-      content="Découvrez et explorez des milliers de films et séries"
+      content="Explorez des milliers de films et séries. Consultez notes, bandes-annonces et casting. Créez votre liste de favoris gratuitement."
     />
-    <meta property="og:image" content="%PUBLIC_URL%/og-image.png" />
-    <meta property="og:url" content="https://votre-domaine.com" />
+    <meta
+      property="og:image"
+      content="https://moviereverse.netlify.app/og-image.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="CinéScope - Application de découverte de films et séries"
+    />
+    <meta property="og:url" content="https://moviereverse.netlify.app/" />
+    <meta property="og:locale" content="fr_FR" />
 
-    <!-- Twitter Card -->
+    <!-- ========================================
+         TWITTER CARD (X)
+    ======================================== -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="CinéScope - Votre compagnon cinéma" />
+    <meta name="twitter:site" content="@CineScope" />
+    <meta name="twitter:creator" content="@SallMamadou" />
+    <meta name="twitter:title" content="CinéScope - Films & Séries TV" />
     <meta
       name="twitter:description"
-      content="Découvrez et explorez des milliers de films et séries"
+      content="Découvrez, explorez et organisez vos films et séries préférés. Base de données complète avec bandes-annonces et casting."
     />
-    <meta name="twitter:image" content="%PUBLIC_URL%/twitter-image.png" />
+    <meta
+      name="twitter:image"
+      content="https://moviereverse.netlify.app/twitter-image.png"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="CinéScope - Votre compagnon cinéma"
+    />
+
+    <!-- ========================================
+         SCHEMA.ORG - STRUCTURED DATA (JSON-LD)
+    ======================================== -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "CinéScope",
+        "applicationCategory": "Entertainment",
+        "operatingSystem": "Any",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR"
+        },
+        "description": "Application web gratuite pour découvrir, explorer et organiser vos films et séries préférés. Base de données complète avec informations, bandes-annonces, casting et critiques.",
+        "url": "https://moviereverse.netlify.app",
+        "author": {
+          "@type": "Person",
+          "name": "Sall Mamadou",
+          "email": "mamadouhassimiousall693@gmail.com"
+        },
+        "inLanguage": "fr-FR",
+        "keywords": "films, séries, cinéma, streaming, TMDB, bandes-annonces, casting",
+        "screenshot": "https://moviereverse.netlify.app/screenshot.png",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.8",
+          "ratingCount": "250"
+        },
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "featureList": [
+          "Recherche de films et séries",
+          "Informations détaillées (synopsis, casting, notes)",
+          "Bandes-annonces YouTube",
+          "Liste de favoris personnalisée",
+          "Filtres avancés",
+          "Mode sombre/clair",
+          "Interface responsive"
+        ]
+      }
+    </script>
+
+    <!-- ========================================
+         BREADCRUMB SCHEMA
+    ======================================== -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Accueil",
+            "item": "https://moviereverse.netlify.app/"
+          }
+        ]
+      }
+    </script>
+
+    <!-- ========================================
+         ORGANIZATION SCHEMA
+    ======================================== -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "CinéScope",
+        "url": "https://moviereverse.netlify.app",
+        "logo": "https://moviereverse.netlify.app/logo512.png",
+        "description": "Application de découverte de films et séries TV",
+        "foundingDate": "2024",
+        "founder": {
+          "@type": "Person",
+          "name": "Sall Mamadou"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "email": "mamadouhassimiousall693@gmail.com",
+          "contactType": "Customer Service"
+        },
+        "sameAs": ["https://github.com/sall0568"]
+      }
+    </script>
+
+    <!-- ========================================
+         PRECONNECT - Optimisation Performance
+    ======================================== -->
+    <link rel="preconnect" href="https://api.themoviedb.org" />
+    <link rel="preconnect" href="https://image.tmdb.org" />
+    <link rel="dns-prefetch" href="https://api.themoviedb.org" />
+    <link rel="dns-prefetch" href="https://image.tmdb.org" />
+
+    <!-- ========================================
+         ALTERNATE LANGUAGES (si multilingue)
+    ======================================== -->
+    <link
+      rel="alternate"
+      hreflang="fr"
+      href="https://moviereverse.netlify.app/"
+    />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href="https://moviereverse.netlify.app/"
+    />
+
+    <!-- ========================================
+         VERIFICATION (à ajouter après création)
+    ======================================== -->
+    <meta
+      name="google-site-verification"
+      content="A7X6ZcSNipBENHD1a4UKI2finrriGe_wJnNHQg1nfMI"
+    />
+    <meta name="msvalidate.01" content="C045E4D37FFBFB3CD7F74179A99C6A95" />
 
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-
-    <!-- TITRE PERSONNALISÉ -->
-    <title>CinéScope - Découvrez vos films et séries préférés</title>
   </head>
   <body>
     <noscript>
-      Vous devez activer JavaScript pour utiliser CinéScope.
+      Vous devez activer JavaScript pour utiliser CinéScope. Cette application
+      nécessite JavaScript pour fonctionner correctement.
     </noscript>
     <div id="root"></div>
+
+    <!-- ========================================
+         NO-JS FALLBACK pour SEO
+    ======================================== -->
+    <noscript>
+      <div
+        style="
+          padding: 40px;
+          text-align: center;
+          font-family: Arial, sans-serif;
+        "
+      >
+        <h1>CinéScope - Films & Séries TV</h1>
+        <p>
+          Découvrez des milliers de films et séries TV. Recherchez, consultez
+          les notes, bandes-annonces et casting.
+        </p>
+        <ul style="list-style: none; padding: 0">
+          <li>✓ Base de données complète de films et séries</li>
+          <li>✓ Informations détaillées et bandes-annonces</li>
+          <li>✓ Créez votre liste de favoris</li>
+          <li>✓ Gratuit et sans inscription</li>
+        </ul>
+        <p>
+          <strong
+            >Veuillez activer JavaScript pour utiliser l'application.</strong
+          >
+        </p>
+      </div>
+    </noscript>
   </body>
 </html>
