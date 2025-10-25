@@ -7,7 +7,7 @@
   <!-- Page d'accueil - PRIORITÉ MAXIMALE -->
   <url>
     <loc>https://moviereverse.netlify.app/</loc>
-    <lastmod>2025-10-24</lastmod>
+    <lastmod>2024-12-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -15,7 +15,7 @@
   <!-- Page Séries -->
   <url>
     <loc>https://moviereverse.netlify.app/series</loc>
-    <lastmod>2025-10-24</lastmod>
+    <lastmod>2024-12-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
@@ -23,7 +23,7 @@
   <!-- Page Favoris -->
   <url>
     <loc>https://moviereverse.netlify.app/coups-de-coeur</loc>
-    <lastmod>2025-10-24</lastmod>
+    <lastmod>2024-12-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -31,28 +31,28 @@
   <!-- Pages légales -->
   <url>
     <loc>https://moviereverse.netlify.app/about</loc>
-    <lastmod>2025-10-24</lastmod>
+    <lastmod>2024-12-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
     <loc>https://moviereverse.netlify.app/legal</loc>
-    <lastmod>2025-10-24</lastmod>
+    <lastmod>2024-12-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <url>
     <loc>https://moviereverse.netlify.app/privacy</loc>
-    <lastmod>2025-10-24</lastmod>
+    <lastmod>2024-12-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <url>
     <loc>https://moviereverse.netlify.app/terms</loc>
-    <lastmod>2025-10-24</lastmod>
+    <lastmod>2024-12-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
