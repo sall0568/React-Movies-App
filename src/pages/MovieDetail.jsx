@@ -10,6 +10,12 @@ import ReviewsSection from "../components/SectionReviews";
 import ScrollToTop from "../components/ScrollToTop";
 import { useFavorites } from "../contexts/FavoritesContext";
 import Footer from "../components/Footer";
+import StructuredData, {
+  generateMovieSchema,
+  generateBreadcrumbSchema,
+} from "../components/StructuredData";
+import Breadcrumbs from "../components/Breadcrumbs";
+import { useSlugRedirect } from "../utils/seo";
 
 const MovieDetail = () => {
   const { id } = useParams();
@@ -24,6 +30,14 @@ const MovieDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { isMovieFavorite, toggleMovieFavorite } = useFavorites();
+  const movieSchema = generateMovieSchema(movie);
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Accueil", url: "https://moviereverse.netlify.app/" },
+    { name: "Films", url: "https://moviereverse.netlify.app/" },
+    { name: movie.title, url: window.location.href },
+  ]);
+
+  useSlugRedirect(movie?.id, movie?.title, "/movie");
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
@@ -108,152 +122,168 @@ const MovieDetail = () => {
   const isFav = isMovieFavorite(movie.id);
 
   return (
-    <div className="movie-detail-page">
+    <>
+      <StructuredData data={movieSchema} />
+      <StructuredData data={breadcrumbSchema} />
+      <SEOHelmet
+        title={movie.title}
+        description={movie.overview?.substring(0, 160)}
+        image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+        url={window.location.href}
+      />
       <Header />
+      <Breadcrumbs
+        items={[{ name: "Films", url: "/" }, { name: movie.title }]}
+      />
+      <div className="movie-detail-page">
+        <Header />
 
-      <button className="btn-back-fixed" onClick={() => navigate(-1)}>
-        ← Retour
-      </button>
+        <button className="btn-back-fixed" onClick={() => navigate(-1)}>
+          ← Retour
+        </button>
 
-      <div className="movie-detail-container">
-        <div className="movie-backdrop">
-          {movie.backdrop_path && (
-            <img
-              src={`${
-                process.env.REACT_APP_TMDB_IMAGE_BASE_URL ||
-                "https://image.tmdb.org/t/p/original"
-              }${movie.backdrop_path}`}
-              alt={movie.title}
-            />
-          )}
-          <div className="backdrop-overlay"></div>
-        </div>
-
-        <div className="movie-content">
-          <div className="movie-poster">
-            <img
-              src={
-                movie.poster_path
-                  ? `${
-                      process.env.REACT_APP_TMDB_IMAGE_BASE_URL ||
-                      "https://image.tmdb.org/t/p/original"
-                    }${movie.poster_path}`
-                  : "./img/poster.jpg"
-              }
-              alt={movie.title}
-            />
+        <div className="movie-detail-container">
+          <div className="movie-backdrop">
+            {movie.backdrop_path && (
+              <img
+                src={`${
+                  process.env.REACT_APP_TMDB_IMAGE_BASE_URL ||
+                  "https://image.tmdb.org/t/p/original"
+                }${movie.backdrop_path}`}
+                alt={movie.title}
+              />
+            )}
+            <div className="backdrop-overlay"></div>
           </div>
 
-          <div className="movie-info">
-            <h1>{movie.title}</h1>
-            {movie.tagline && <p className="tagline">"{movie.tagline}"</p>}
-
-            <div className="movie-meta">
-              <span className="rating">
-                ⭐ {movie.vote_average.toFixed(1)}/10
-              </span>
-              {movie.release_date && (
-                <span>📅 {dateFormater(movie.release_date)}</span>
-              )}
-              {movie.runtime && <span>⏱️ {formatRuntime(movie.runtime)}</span>}
+          <div className="movie-content">
+            <div className="movie-poster">
+              <img
+                src={
+                  movie.poster_path
+                    ? `${
+                        process.env.REACT_APP_TMDB_IMAGE_BASE_URL ||
+                        "https://image.tmdb.org/t/p/original"
+                      }${movie.poster_path}`
+                    : "./img/poster.jpg"
+                }
+                alt={movie.title}
+              />
             </div>
 
-            <div className="genres">
-              {movie.genres.map((genre) => (
-                <span key={genre.id} className="genre-badge">
-                  {genre.name}
+            <div className="movie-info">
+              <h1>{movie.title}</h1>
+              {movie.tagline && <p className="tagline">"{movie.tagline}"</p>}
+
+              <div className="movie-meta">
+                <span className="rating">
+                  ⭐ {movie.vote_average.toFixed(1)}/10
                 </span>
-              ))}
-            </div>
+                {movie.release_date && (
+                  <span>📅 {dateFormater(movie.release_date)}</span>
+                )}
+                {movie.runtime && (
+                  <span>⏱️ {formatRuntime(movie.runtime)}</span>
+                )}
+              </div>
 
-            <button
-              className={`btn-favorite ${isFav ? "active" : ""}`}
-              onClick={() => toggleMovieFavorite(movie.id)}
-            >
-              {isFav ? "💔 Retirer des favoris" : "💖 Ajouter aux favoris"}
-            </button>
+              <div className="genres">
+                {movie.genres.map((genre) => (
+                  <span key={genre.id} className="genre-badge">
+                    {genre.name}
+                  </span>
+                ))}
+              </div>
 
-            <div className="overview">
-              <h2>Synopsis</h2>
-              <p>{movie.overview || "Pas de synopsis disponible"}</p>
-            </div>
+              <button
+                className={`btn-favorite ${isFav ? "active" : ""}`}
+                onClick={() => toggleMovieFavorite(movie.id)}
+              >
+                {isFav ? "💔 Retirer des favoris" : "💖 Ajouter aux favoris"}
+              </button>
 
-            <WatchProviders providers={watchProviders} />
+              <div className="overview">
+                <h2>Synopsis</h2>
+                <p>{movie.overview || "Pas de synopsis disponible"}</p>
+              </div>
 
-            <ReviewsSection reviews={reviews} totalReviews={totalReviews} />
+              <WatchProviders providers={watchProviders} />
 
-            {credits && credits.cast.length > 0 && (
-              <div className="cast">
-                <h2>Casting principal</h2>
-                <div className="cast-list">
-                  {credits.cast.slice(0, 6).map((actor) => (
-                    <div
-                      key={actor.id}
-                      className="cast-member"
-                      onClick={() => navigate(`/person/${actor.id}`)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {actor.profile_path ? (
+              <ReviewsSection reviews={reviews} totalReviews={totalReviews} />
+
+              {credits && credits.cast.length > 0 && (
+                <div className="cast">
+                  <h2>Casting principal</h2>
+                  <div className="cast-list">
+                    {credits.cast.slice(0, 6).map((actor) => (
+                      <div
+                        key={actor.id}
+                        className="cast-member"
+                        onClick={() => navigate(`/person/${actor.id}`)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {actor.profile_path ? (
+                          <img
+                            src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
+                            alt={actor.name}
+                          />
+                        ) : (
+                          <div className="no-photo">👤</div>
+                        )}
+                        <p className="actor-name">{actor.name}</p>
+                        <p className="character-name">{actor.character}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {trailer && (
+                <div className="trailer">
+                  <h2>Bande-annonce</h2>
+                  <div className="video-container">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${trailer.key}`}
+                      title={trailer.name}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                </div>
+              )}
+
+              {similar.length > 0 && (
+                <div className="similar-movies">
+                  <h2>Films similaires</h2>
+                  <div className="similar-grid">
+                    {similar.map((movie) => (
+                      <div
+                        key={movie.id}
+                        className="similar-card"
+                        onClick={() => navigate(`/movie/${movie.id}`)}
+                      >
                         <img
-                          src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
-                          alt={actor.name}
+                          src={
+                            movie.poster_path
+                              ? `https://image.tmdb.org/t/p/w200${movie.poster_path}`
+                              : "./img/poster.jpg"
+                          }
+                          alt={movie.title}
                         />
-                      ) : (
-                        <div className="no-photo">👤</div>
-                      )}
-                      <p className="actor-name">{actor.name}</p>
-                      <p className="character-name">{actor.character}</p>
-                    </div>
-                  ))}
+                        <p>{movie.title}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
-
-            {trailer && (
-              <div className="trailer">
-                <h2>Bande-annonce</h2>
-                <div className="video-container">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${trailer.key}`}
-                    title={trailer.name}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-              </div>
-            )}
-
-            {similar.length > 0 && (
-              <div className="similar-movies">
-                <h2>Films similaires</h2>
-                <div className="similar-grid">
-                  {similar.map((movie) => (
-                    <div
-                      key={movie.id}
-                      className="similar-card"
-                      onClick={() => navigate(`/movie/${movie.id}`)}
-                    >
-                      <img
-                        src={
-                          movie.poster_path
-                            ? `https://image.tmdb.org/t/p/w200${movie.poster_path}`
-                            : "./img/poster.jpg"
-                        }
-                        alt={movie.title}
-                      />
-                      <p>{movie.title}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
+        <Footer />
+        <ScrollToTop />
       </div>
-      <Footer />
-      <ScrollToTop />
-    </div>
+    </>
   );
 };
 

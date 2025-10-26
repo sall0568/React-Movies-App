@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useFavorites } from "../contexts/FavoritesContext";
+import { getTVUrl } from "../utils/seo";
+import { getOptimizedImageUrl } from "../utils/imageOptimizer";
 
 const TVCard = ({ show }) => {
   const { isTVFavorite, toggleTVFavorite } = useFavorites();
@@ -59,20 +61,18 @@ const TVCard = ({ show }) => {
 
   return (
     <div className="card">
-      <Link to={`/tv/${show.id}`} className="card-link">
+      <Link to={getTVUrl(show.id, show.name)} className="card-link">
         <div className="image-container">
           {!imageLoaded && !imageError && (
             <div className="image-skeleton"></div>
           )}
           <img
-            src={posterUrl}
-            alt={`affiche ${show.name}`}
-            onLoad={() => setImageLoaded(true)}
-            onError={() => {
-              setImageError(true);
-              setImageLoaded(true);
-            }}
-            style={{ display: imageLoaded ? "block" : "none" }}
+            src={getOptimizedImageUrl(show.poster_path, "w500")}
+            alt={`Affiche de la série ${show.name}`}
+            loading="lazy"
+            decoding="async"
+            width="280"
+            height="420"
           />
         </div>
         <h2>{show.name}</h2>

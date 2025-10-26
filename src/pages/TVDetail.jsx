@@ -10,6 +10,12 @@ import ReviewsSection from "../components/SectionReviews.jsx";
 import Season from "../components/Season";
 import { useFavorites } from "../contexts/FavoritesContext";
 import Footer from "../components/Footer";
+import StructuredData, {
+  generateTVSeriesSchema,
+  generateBreadcrumbSchema,
+} from "../components/StructuredData";
+import Breadcrumbs from "../components/Breadcrumbs";
+import { useSlugRedirect } from "../utils/seo";
 
 function TVDetail() {
   const { id } = useParams();
@@ -24,6 +30,14 @@ function TVDetail() {
   const [totalReviews, setTotalReviews] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const movieSchema = generateTVSeriesSchema(movie);
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Accueil", url: "https://moviereverse.netlify.app/" },
+    { name: "Films", url: "https://moviereverse.netlify.app/" },
+    { name: movie.title, url: window.location.href },
+  ]);
+
+  useSlugRedirect(movie?.id, movie?.title, "/movie");
 
   useEffect(() => {
     const fetchTVDetails = async () => {
@@ -108,201 +122,215 @@ function TVDetail() {
   const isFav = isTVFavorite(parseInt(id));
 
   return (
-    <div className="tv-detail-page">
+    <>
+      <StructuredData data={movieSchema} />
+      <StructuredData data={breadcrumbSchema} />
+      <SEOHelmet
+        title={movie.title}
+        description={movie.overview?.substring(0, 160)}
+        image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+        url={window.location.href}
+      />
       <Header />
+      <Breadcrumbs
+        items={[{ name: "Films", url: "/" }, { name: movie.title }]}
+      />
+      <div className="tv-detail-page">
+        <Header />
 
-      <button className="btn-back-fixed" onClick={() => navigate(-1)}>
-        ← Retour
-      </button>
+        <button className="btn-back-fixed" onClick={() => navigate(-1)}>
+          ← Retour
+        </button>
 
-      <div className="tv-detail-container">
-        <div className="tv-backdrop">
-          {show.backdrop_path && (
-            <img
-              src={`${
-                process.env.REACT_APP_TMDB_IMAGE_BASE_URL ||
-                "https://image.tmdb.org/t/p/original"
-              }${show.backdrop_path}`}
-              alt={show.name}
-            />
-          )}
-          <div className="backdrop-overlay"></div>
-        </div>
-
-        <div className="tv-content">
-          <div className="tv-poster">
-            <img
-              src={
-                show.poster_path
-                  ? `${
-                      process.env.REACT_APP_TMDB_IMAGE_BASE_URL ||
-                      "https://image.tmdb.org/t/p/original"
-                    }${show.poster_path}`
-                  : "./img/poster.jpg"
-              }
-              alt={show.name}
-            />
+        <div className="tv-detail-container">
+          <div className="tv-backdrop">
+            {show.backdrop_path && (
+              <img
+                src={`${
+                  process.env.REACT_APP_TMDB_IMAGE_BASE_URL ||
+                  "https://image.tmdb.org/t/p/original"
+                }${show.backdrop_path}`}
+                alt={show.name}
+              />
+            )}
+            <div className="backdrop-overlay"></div>
           </div>
 
-          <div className="tv-info">
-            <h1>{show.name}</h1>
-            {show.tagline && <p className="tagline">"{show.tagline}"</p>}
+          <div className="tv-content">
+            <div className="tv-poster">
+              <img
+                src={
+                  show.poster_path
+                    ? `${
+                        process.env.REACT_APP_TMDB_IMAGE_BASE_URL ||
+                        "https://image.tmdb.org/t/p/original"
+                      }${show.poster_path}`
+                    : "./img/poster.jpg"
+                }
+                alt={show.name}
+              />
+            </div>
 
-            <div className="tv-meta">
-              <span className="rating">
-                ⭐ {show.vote_average.toFixed(1)}/10
-              </span>
-              {show.first_air_date && (
-                <span>📅 {dateFormater(show.first_air_date)}</span>
-              )}
-              {show.number_of_seasons && (
-                <span>
-                  📺 {show.number_of_seasons} saison
-                  {show.number_of_seasons > 1 ? "s" : ""}
+            <div className="tv-info">
+              <h1>{show.name}</h1>
+              {show.tagline && <p className="tagline">"{show.tagline}"</p>}
+
+              <div className="tv-meta">
+                <span className="rating">
+                  ⭐ {show.vote_average.toFixed(1)}/10
                 </span>
-              )}
-              {show.number_of_episodes && (
-                <span>🎬 {show.number_of_episodes} épisodes</span>
-              )}
-            </div>
-
-            <div className="genres">
-              {show.genres &&
-                show.genres.map((genre) => (
-                  <span key={genre.id} className="genre-badge">
-                    {genre.name}
+                {show.first_air_date && (
+                  <span>📅 {dateFormater(show.first_air_date)}</span>
+                )}
+                {show.number_of_seasons && (
+                  <span>
+                    📺 {show.number_of_seasons} saison
+                    {show.number_of_seasons > 1 ? "s" : ""}
                   </span>
-                ))}
-            </div>
+                )}
+                {show.number_of_episodes && (
+                  <span>🎬 {show.number_of_episodes} épisodes</span>
+                )}
+              </div>
 
-            <button
-              className={`btn-favorite ${isFav ? "active" : ""}`}
-              onClick={() => toggleTVFavorite(parseInt(id))}
-            >
-              {isFav ? "💔 Retirer des favoris" : "💖 Ajouter aux favoris"}
-            </button>
+              <div className="genres">
+                {show.genres &&
+                  show.genres.map((genre) => (
+                    <span key={genre.id} className="genre-badge">
+                      {genre.name}
+                    </span>
+                  ))}
+              </div>
 
-            <div className="overview">
-              <h2>Synopsis</h2>
-              <p>{show.overview || "Pas de synopsis disponible"}</p>
-            </div>
+              <button
+                className={`btn-favorite ${isFav ? "active" : ""}`}
+                onClick={() => toggleTVFavorite(parseInt(id))}
+              >
+                {isFav ? "💔 Retirer des favoris" : "💖 Ajouter aux favoris"}
+              </button>
 
-            <WatchProviders providers={watchProviders} />
+              <div className="overview">
+                <h2>Synopsis</h2>
+                <p>{show.overview || "Pas de synopsis disponible"}</p>
+              </div>
 
-            {/* 🆕 Section Avis Complète pour les séries */}
-            <ReviewsSection reviews={reviews} totalReviews={totalReviews} />
+              <WatchProviders providers={watchProviders} />
 
-            {/* Section Saisons */}
-            {show.seasons && show.seasons.length > 0 && (
-              <div className="seasons-section">
-                <h2>Saisons ({show.number_of_seasons})</h2>
-                <div className="seasons-list">
-                  {show.seasons
-                    .filter((season) => season.season_number >= 0)
-                    .map((season) => (
-                      <Season
-                        key={season.id}
-                        season={season}
-                        showId={show.id}
-                        onEpisodeClick={handleSeasonClick}
-                      />
+              {/* 🆕 Section Avis Complète pour les séries */}
+              <ReviewsSection reviews={reviews} totalReviews={totalReviews} />
+
+              {/* Section Saisons */}
+              {show.seasons && show.seasons.length > 0 && (
+                <div className="seasons-section">
+                  <h2>Saisons ({show.number_of_seasons})</h2>
+                  <div className="seasons-list">
+                    {show.seasons
+                      .filter((season) => season.season_number >= 0)
+                      .map((season) => (
+                        <Season
+                          key={season.id}
+                          season={season}
+                          showId={show.id}
+                          onEpisodeClick={handleSeasonClick}
+                        />
+                      ))}
+                  </div>
+                </div>
+              )}
+
+              {show.created_by && show.created_by.length > 0 && (
+                <div className="creators">
+                  <h2>Créé par</h2>
+                  <div className="creators-list">
+                    {show.created_by.map((creator) => (
+                      <div key={creator.id} className="creator-item">
+                        {creator.profile_path ? (
+                          <img
+                            src={`https://image.tmdb.org/t/p/w185${creator.profile_path}`}
+                            alt={creator.name}
+                          />
+                        ) : (
+                          <div className="no-photo">👤</div>
+                        )}
+                        <p>{creator.name}</p>
+                      </div>
                     ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {show.created_by && show.created_by.length > 0 && (
-              <div className="creators">
-                <h2>Créé par</h2>
-                <div className="creators-list">
-                  {show.created_by.map((creator) => (
-                    <div key={creator.id} className="creator-item">
-                      {creator.profile_path ? (
+              {credits && credits.cast.length > 0 && (
+                <div className="cast">
+                  <h2>Casting principal</h2>
+                  <div className="cast-list">
+                    {credits.cast.slice(0, 6).map((actor) => (
+                      <div
+                        key={actor.id}
+                        className="cast-member"
+                        onClick={() => navigate(`/person/${actor.id}`)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {actor.profile_path ? (
+                          <img
+                            src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
+                            alt={actor.name}
+                          />
+                        ) : (
+                          <div className="no-photo">👤</div>
+                        )}
+                        <p className="actor-name">{actor.name}</p>
+                        <p className="character-name">{actor.character}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {trailer && (
+                <div className="trailer">
+                  <h2>Bande-annonce</h2>
+                  <div className="video-container">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${trailer.key}`}
+                      title={trailer.name}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                </div>
+              )}
+
+              {similar.length > 0 && (
+                <div className="similar-shows">
+                  <h2>Séries similaires</h2>
+                  <div className="similar-grid">
+                    {similar.map((tvShow) => (
+                      <div
+                        key={tvShow.id}
+                        className="similar-card"
+                        onClick={() => navigate(`/tv/${tvShow.id}`)}
+                      >
                         <img
-                          src={`https://image.tmdb.org/t/p/w185${creator.profile_path}`}
-                          alt={creator.name}
+                          src={
+                            tvShow.poster_path
+                              ? `https://image.tmdb.org/t/p/w200${tvShow.poster_path}`
+                              : "./img/poster.jpg"
+                          }
+                          alt={tvShow.name}
                         />
-                      ) : (
-                        <div className="no-photo">👤</div>
-                      )}
-                      <p>{creator.name}</p>
-                    </div>
-                  ))}
+                        <p>{tvShow.name}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
-
-            {credits && credits.cast.length > 0 && (
-              <div className="cast">
-                <h2>Casting principal</h2>
-                <div className="cast-list">
-                  {credits.cast.slice(0, 6).map((actor) => (
-                    <div
-                      key={actor.id}
-                      className="cast-member"
-                      onClick={() => navigate(`/person/${actor.id}`)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {actor.profile_path ? (
-                        <img
-                          src={`https://image.tmdb.org/t/p/w185${actor.profile_path}`}
-                          alt={actor.name}
-                        />
-                      ) : (
-                        <div className="no-photo">👤</div>
-                      )}
-                      <p className="actor-name">{actor.name}</p>
-                      <p className="character-name">{actor.character}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {trailer && (
-              <div className="trailer">
-                <h2>Bande-annonce</h2>
-                <div className="video-container">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${trailer.key}`}
-                    title={trailer.name}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-              </div>
-            )}
-
-            {similar.length > 0 && (
-              <div className="similar-shows">
-                <h2>Séries similaires</h2>
-                <div className="similar-grid">
-                  {similar.map((tvShow) => (
-                    <div
-                      key={tvShow.id}
-                      className="similar-card"
-                      onClick={() => navigate(`/tv/${tvShow.id}`)}
-                    >
-                      <img
-                        src={
-                          tvShow.poster_path
-                            ? `https://image.tmdb.org/t/p/w200${tvShow.poster_path}`
-                            : "./img/poster.jpg"
-                        }
-                        alt={tvShow.name}
-                      />
-                      <p>{tvShow.name}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
+    </>
   );
 }
 

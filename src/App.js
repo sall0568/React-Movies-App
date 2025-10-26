@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import Loading from "./components/Loading";
+import { usePageTracking } from "./hooks/useAnalytics";
 
 // Lazy loading des pages
 const Home = lazy(() => import("./pages/Home"));
@@ -21,6 +22,7 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 
 const AppContent = () => {
+  usePageTracking();
   const { theme } = useTheme();
 
   return (
@@ -33,12 +35,15 @@ const AppContent = () => {
             <Route path="/series" element={<TVShows />} />
             <Route path="/coups-de-coeur" element={<LikePage />} />
             <Route path="/movie/:id" element={<MovieDetail />} />
+            <Route path="/movie/:id-:slug" element={<MovieDetail />} />
             <Route
               path="/tv/:tvId/season/:seasonNumber"
               element={<SeasonDetail />}
             />
             <Route path="/tv/:id" element={<TVDetail />} />
+            <Route path="/tv/:id-:slug" element={<TVDetail />} />
             <Route path="/person/:id" element={<PersonDetail />} />
+            <Route path="/person/:id-:slug" element={<PersonDetail />} />
 
             {/* Routes légales */}
             <Route path="/about" element={<About />} />

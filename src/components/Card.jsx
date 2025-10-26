@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useFavorites } from "../contexts/FavoritesContext";
 import { Link } from "react-router-dom";
+import { getMovieUrl } from "../utils/seo";
+import { getOptimizedImageUrl } from "../utils/imageOptimizer";
 
 const Card = ({ movie }) => {
   const { isMovieFavorite, toggleMovieFavorite } = useFavorites();
@@ -62,20 +64,18 @@ const Card = ({ movie }) => {
 
   return (
     <div className="card">
-      <Link to={`/movie/${movie.id}`} className="card-link">
+      <Link to={getMovieUrl(movie.id, movie.title)} className="card-link">
         <div className="image-container">
           {!imageLoaded && !imageError && (
             <div className="image-skeleton"></div>
           )}
           <img
-            src={posterUrl}
-            alt={`affiche ${movie.title}`}
-            onLoad={() => setImageLoaded(true)}
-            onError={() => {
-              setImageError(true);
-              setImageLoaded(true);
-            }}
-            style={{ display: imageLoaded ? "block" : "none" }}
+            src={getOptimizedImageUrl(movie.poster_path, "w500")}
+            alt={`Affiche du film ${movie.title}`}
+            loading="lazy"
+            decoding="async"
+            width="280"
+            height="420"
           />
         </div>
         <h2>{movie.title}</h2>
