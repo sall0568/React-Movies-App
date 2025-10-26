@@ -1,4 +1,4 @@
-// src/pages/MovieDetail.jsx - AVEC SCROLL TO TOP
+// src/pages/MovieDetail.jsx - VERSION CORRIGÉE
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { movieAPI } from "../services/api";
@@ -8,6 +8,7 @@ import ErrorMessage from "../components/ErrorMessage";
 import WatchProviders from "../components/WatchProviders";
 import ReviewsSection from "../components/SectionReviews";
 import ScrollToTop from "../components/ScrollToTop";
+import SEOHelmet from "../components/SEOHelmet";
 import { useFavorites } from "../contexts/FavoritesContext";
 import Footer from "../components/Footer";
 import StructuredData, {
@@ -30,12 +31,6 @@ const MovieDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { isMovieFavorite, toggleMovieFavorite } = useFavorites();
-  const movieSchema = generateMovieSchema(movie);
-  const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: "Accueil", url: "https://moviereverse.netlify.app/" },
-    { name: "Films", url: "https://moviereverse.netlify.app/" },
-    { name: movie.title, url: window.location.href },
-  ]);
 
   useSlugRedirect(movie?.id, movie?.title, "/movie");
 
@@ -121,22 +116,28 @@ const MovieDetail = () => {
   );
   const isFav = isMovieFavorite(movie.id);
 
+  const movieSchema = generateMovieSchema(movie);
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Accueil", url: "https://moviereverse.netlify.app/" },
+    { name: "Films", url: "https://moviereverse.netlify.app/" },
+    { name: movie.title, url: window.location.href },
+  ]);
+
   return (
     <>
       <StructuredData data={movieSchema} />
       <StructuredData data={breadcrumbSchema} />
       <SEOHelmet
-        title={movie.title}
+        title={`${movie.title} - CinéScope`}
         description={movie.overview?.substring(0, 160)}
         image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-        url={window.location.href}
-      />
-      <Header />
-      <Breadcrumbs
-        items={[{ name: "Films", url: "/" }, { name: movie.title }]}
+        type="video.movie"
       />
       <div className="movie-detail-page">
         <Header />
+        <Breadcrumbs
+          items={[{ name: "Films", url: "/" }, { name: movie.title }]}
+        />
 
         <button className="btn-back-fixed" onClick={() => navigate(-1)}>
           ← Retour

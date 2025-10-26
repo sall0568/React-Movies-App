@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { useFavorites } from "../contexts/FavoritesContext";
 import { getTVUrl } from "../utils/seo";
@@ -6,8 +6,6 @@ import { getOptimizedImageUrl } from "../utils/imageOptimizer";
 
 const TVCard = ({ show }) => {
   const { isTVFavorite, toggleTVFavorite } = useFavorites();
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
 
   const dateFormater = (date) => {
     if (!date) return "";
@@ -45,13 +43,6 @@ const TVCard = ({ show }) => {
     return null;
   };
 
-  const posterUrl = show.poster_path
-    ? `${
-        process.env.REACT_APP_TMDB_IMAGE_BASE_URL ||
-        "https://image.tmdb.org/t/p/original"
-      }${show.poster_path}`
-    : "./img/poster.jpg";
-
   const isFav = isTVFavorite(show.id);
 
   const handleToggleFavorite = (e) => {
@@ -63,9 +54,6 @@ const TVCard = ({ show }) => {
     <div className="card">
       <Link to={getTVUrl(show.id, show.name)} className="card-link">
         <div className="image-container">
-          {!imageLoaded && !imageError && (
-            <div className="image-skeleton"></div>
-          )}
           <img
             src={getOptimizedImageUrl(show.poster_path, "w500")}
             alt={`Affiche de la série ${show.name}`}

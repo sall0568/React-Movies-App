@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useFavorites } from "../contexts/FavoritesContext";
 import { Link } from "react-router-dom";
 import { getMovieUrl } from "../utils/seo";
@@ -6,8 +6,6 @@ import { getOptimizedImageUrl } from "../utils/imageOptimizer";
 
 const Card = ({ movie }) => {
   const { isMovieFavorite, toggleMovieFavorite } = useFavorites();
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
 
   const dateFormater = (date) => {
     if (!date) return "";
@@ -53,22 +51,12 @@ const Card = ({ movie }) => {
     toggleMovieFavorite(movie.id);
   };
 
-  const posterUrl = movie.poster_path
-    ? `${
-        process.env.REACT_APP_TMDB_IMAGE_BASE_URL ||
-        "https://image.tmdb.org/t/p/original"
-      }${movie.poster_path}`
-    : "./img/poster.jpg";
-
   const isFav = isMovieFavorite(movie.id);
 
   return (
     <div className="card">
       <Link to={getMovieUrl(movie.id, movie.title)} className="card-link">
         <div className="image-container">
-          {!imageLoaded && !imageError && (
-            <div className="image-skeleton"></div>
-          )}
           <img
             src={getOptimizedImageUrl(movie.poster_path, "w500")}
             alt={`Affiche du film ${movie.title}`}

@@ -1,4 +1,4 @@
-// src/App.js - VERSION MISE À JOUR avec routes légales
+// src/App.js - VERSION CORRIGÉE
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
@@ -22,40 +22,38 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 
 const AppContent = () => {
-  usePageTracking();
+  usePageTracking(); // ✅ Maintenant à l'intérieur de BrowserRouter
   const { theme } = useTheme();
 
   return (
     <div className={`app ${theme}`}>
-      <BrowserRouter>
-        <Suspense fallback={<Loading />}>
-          <Routes>
-            {/* Routes principales */}
-            <Route path="/" element={<Home />} />
-            <Route path="/series" element={<TVShows />} />
-            <Route path="/coups-de-coeur" element={<LikePage />} />
-            <Route path="/movie/:id" element={<MovieDetail />} />
-            <Route path="/movie/:id-:slug" element={<MovieDetail />} />
-            <Route
-              path="/tv/:tvId/season/:seasonNumber"
-              element={<SeasonDetail />}
-            />
-            <Route path="/tv/:id" element={<TVDetail />} />
-            <Route path="/tv/:id-:slug" element={<TVDetail />} />
-            <Route path="/person/:id" element={<PersonDetail />} />
-            <Route path="/person/:id-:slug" element={<PersonDetail />} />
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          {/* Routes principales */}
+          <Route path="/" element={<Home />} />
+          <Route path="/series" element={<TVShows />} />
+          <Route path="/coups-de-coeur" element={<LikePage />} />
+          <Route path="/movie/:id" element={<MovieDetail />} />
+          <Route path="/movie/:id-:slug" element={<MovieDetail />} />
+          <Route
+            path="/tv/:tvId/season/:seasonNumber"
+            element={<SeasonDetail />}
+          />
+          <Route path="/tv/:id" element={<TVDetail />} />
+          <Route path="/tv/:id-:slug" element={<TVDetail />} />
+          <Route path="/person/:id" element={<PersonDetail />} />
+          <Route path="/person/:id-:slug" element={<PersonDetail />} />
 
-            {/* Routes légales */}
-            <Route path="/about" element={<About />} />
-            <Route path="/legal" element={<Legal />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
+          {/* Routes légales */}
+          <Route path="/about" element={<About />} />
+          <Route path="/legal" element={<Legal />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
 
-            {/* Route 404 */}
-            <Route path="*" element={<Home />} />
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
+          {/* Route 404 */}
+          <Route path="*" element={<Home />} />
+        </Routes>
+      </Suspense>
     </div>
   );
 };
@@ -64,7 +62,10 @@ const App = () => {
   return (
     <ThemeProvider>
       <FavoritesProvider>
-        <AppContent />
+        {/* ✅ BrowserRouter doit envelopper AppContent */}
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
       </FavoritesProvider>
     </ThemeProvider>
   );

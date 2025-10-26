@@ -1,4 +1,4 @@
-// src/pages/TVDetail.jsx - VERSION MISE À JOUR avec avis complets
+// src/pages/TVDetail.jsx - VERSION CORRIGÉE
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { tvAPI } from "../services/api";
@@ -8,6 +8,7 @@ import ErrorMessage from "../components/ErrorMessage";
 import WatchProviders from "../components/WatchProviders";
 import ReviewsSection from "../components/SectionReviews.jsx";
 import Season from "../components/Season";
+import SEOHelmet from "../components/SEOHelmet";
 import { useFavorites } from "../contexts/FavoritesContext";
 import Footer from "../components/Footer";
 import StructuredData, {
@@ -30,14 +31,8 @@ function TVDetail() {
   const [totalReviews, setTotalReviews] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const movieSchema = generateTVSeriesSchema(movie);
-  const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: "Accueil", url: "https://moviereverse.netlify.app/" },
-    { name: "Films", url: "https://moviereverse.netlify.app/" },
-    { name: movie.title, url: window.location.href },
-  ]);
 
-  useSlugRedirect(movie?.id, movie?.title, "/movie");
+  useSlugRedirect(show?.id, show?.name, "/tv");
 
   useEffect(() => {
     const fetchTVDetails = async () => {
@@ -121,22 +116,28 @@ function TVDetail() {
   );
   const isFav = isTVFavorite(parseInt(id));
 
+  const tvSchema = generateTVSeriesSchema(show);
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Accueil", url: "https://moviereverse.netlify.app/" },
+    { name: "Séries", url: "https://moviereverse.netlify.app/series" },
+    { name: show.name, url: window.location.href },
+  ]);
+
   return (
     <>
-      <StructuredData data={movieSchema} />
+      <StructuredData data={tvSchema} />
       <StructuredData data={breadcrumbSchema} />
       <SEOHelmet
-        title={movie.title}
-        description={movie.overview?.substring(0, 160)}
-        image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-        url={window.location.href}
-      />
-      <Header />
-      <Breadcrumbs
-        items={[{ name: "Films", url: "/" }, { name: movie.title }]}
+        title={`${show.name} - CinéScope`}
+        description={show.overview?.substring(0, 160)}
+        image={`https://image.tmdb.org/t/p/w500${show.poster_path}`}
+        type="video.tv_show"
       />
       <div className="tv-detail-page">
         <Header />
+        <Breadcrumbs
+          items={[{ name: "Séries", url: "/series" }, { name: show.name }]}
+        />
 
         <button className="btn-back-fixed" onClick={() => navigate(-1)}>
           ← Retour
@@ -216,10 +217,8 @@ function TVDetail() {
 
               <WatchProviders providers={watchProviders} />
 
-              {/* 🆕 Section Avis Complète pour les séries */}
               <ReviewsSection reviews={reviews} totalReviews={totalReviews} />
 
-              {/* Section Saisons */}
               {show.seasons && show.seasons.length > 0 && (
                 <div className="seasons-section">
                   <h2>Saisons ({show.number_of_seasons})</h2>
