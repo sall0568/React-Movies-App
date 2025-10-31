@@ -1,6 +1,7 @@
+// src/components/Header.jsx - AVEC LIEN BLOG
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Film, Tv, Heart, Menu, X } from "lucide-react";
+import { Film, Tv, Heart, Menu, X, BookOpen } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 import { useFavorites } from "../contexts/FavoritesContext";
 
@@ -49,6 +50,16 @@ const Header = () => {
             </li>
             <li>
               <NavLink
+                to="/blog"
+                className={(nav) => (nav.isActive ? "nav-active" : "")}
+                onClick={() => setMenuOpen(false)}
+              >
+                <BookOpen size={20} />
+                <span>Blog</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
                 to="/coups-de-coeur"
                 className={(nav) => (nav.isActive ? "nav-active" : "")}
                 onClick={() => setMenuOpen(false)}
@@ -66,7 +77,6 @@ const Header = () => {
         <ThemeToggle />
       </div>
 
-      {/* Overlay en dehors du header pour éviter les conflits de z-index */}
       {menuOpen && (
         <div
           className="nav-overlay-mobile"

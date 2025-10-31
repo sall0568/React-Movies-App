@@ -19,13 +19,30 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && node scripts/generate-sitemap.js",
+    "build": "react-scripts build && react-snap && node scripts/generate-sitemap.js",
+    "postbuild": "node scripts/post-build-seo.js",
     "generate-sitemap": "node scripts/generate-sitemap.js",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "lint": "eslint src/**/*.{js,jsx}",
-    "format": "prettier --write src/**/*.{js,jsx,scss,css,json}",
-    "analyze": "source-map-explorer 'build/static/js/*.js'"
+    "eject": "react-scripts eject"
+  },
+  "reactSnap": {
+    "inlineCss": true,
+    "minifyHtml": {
+      "collapseWhitespace": true,
+      "removeComments": true
+    },
+    "include": [
+      "/",
+      "/series",
+      "/coups-de-coeur",
+      "/about",
+      "/legal",
+      "/privacy",
+      "/terms"
+    ],
+    "skipThirdPartyRequests": true,
+    "cacheAjaxRequests": true,
+    "preloadImages": false
   },
   "eslintConfig": {
     "extends": [
@@ -55,6 +72,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "react-snap": "^1.23.0",
     "source-map-explorer": "^2.5.3"
   }
 }
