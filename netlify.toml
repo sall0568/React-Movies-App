@@ -25,7 +25,7 @@
   [headers.values]
     Content-Type = "application/xml; charset=utf-8"
     Cache-Control = "public, max-age=0, must-revalidate"
-    X-Robots-Tag = "noindex"
+    X-Robots-Tag = "index, follow"
 
 # Headers pour robots.txt
 [[headers]]
