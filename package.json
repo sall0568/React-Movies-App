@@ -19,7 +19,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && react-snap && node scripts/generate-sitemap.js",
+    "build": "react-scripts build && node scripts/generate-sitemap.js",
     "postbuild": "node scripts/post-build-seo.js",
     "generate-sitemap": "node scripts/generate-sitemap.js",
     "test": "react-scripts test",
