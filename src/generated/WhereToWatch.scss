@@ -1,0 +1,348 @@
+// src/pages/generated/WhereToWatch.scss
+// Styles pour les pages "Où regarder"
+
+.where-to-watch-page {
+    min-height: 100vh;
+    background: var(--color-background);
+
+    .btn-back {
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+        padding: 12px 24px;
+        background: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+            background: var(--color-card-bg);
+            color: var(--color-primary);
+            border: 2px solid var(--color-primary);
+            transform: translateX(-5px);
+        }
+    }
+
+    .where-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+
+        .movie-header {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 60px;
+            background: var(--color-card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            border: 2px solid var(--color-border);
+
+            .movie-poster {
+                flex-shrink: 0;
+                width: 300px;
+
+                img {
+                    width: 100%;
+                    border-radius: 15px;
+                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                }
+            }
+
+            .movie-info {
+                flex: 1;
+
+                h1 {
+                    font-size: 2.5rem;
+                    color: var(--color-text);
+                    margin-bottom: 20px;
+                    line-height: 1.2;
+                }
+
+                .release-date {
+                    font-size: 1.2rem;
+                    color: var(--color-text-secondary);
+                    margin-bottom: 15px;
+                }
+
+                .rating {
+                    display: inline-block;
+                    background: var(--color-primary);
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 12px;
+                    font-size: 1.3rem;
+                    font-weight: bold;
+                    margin-bottom: 25px;
+                }
+
+                .synopsis {
+                    h2 {
+                        font-size: 1.8rem;
+                        color: var(--color-text);
+                        margin-bottom: 15px;
+                    }
+
+                    p {
+                        font-size: 1.2rem;
+                        line-height: 1.8;
+                        color: var(--color-text-secondary);
+                    }
+                }
+            }
+        }
+
+        .streaming-section {
+            background: var(--color-card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            border: 2px solid var(--color-border);
+            margin-bottom: 40px;
+
+            h2 {
+                font-size: 2rem;
+                color: var(--color-text);
+                margin-bottom: 30px;
+                text-align: center;
+            }
+
+            .platform-category {
+                margin-bottom: 40px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                h3 {
+                    font-size: 1.5rem;
+                    color: var(--color-text);
+                    margin-bottom: 20px;
+                    padding-bottom: 10px;
+                    border-bottom: 2px solid var(--color-border);
+                }
+
+                .platform-list {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                    gap: 20px;
+
+                    .platform-card {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 15px;
+                        padding: 25px;
+                        background: var(--color-background);
+                        border: 2px solid var(--color-border);
+                        border-radius: 15px;
+                        text-decoration: none;
+                        transition: all 0.3s ease;
+                        cursor: pointer;
+
+                        &:hover {
+                            border-color: var(--color-primary);
+                            transform: translateY(-5px);
+                            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+                            .btn-watch {
+                                background: var(--color-primary);
+                                color: white;
+                            }
+                        }
+
+                        img {
+                            width: 80px;
+                            height: 80px;
+                            border-radius: 12px;
+                            object-fit: cover;
+                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                        }
+
+                        span {
+                            font-size: 1.1rem;
+                            font-weight: 600;
+                            color: var(--color-text);
+                            text-align: center;
+                        }
+
+                        .btn-watch {
+                            width: 100%;
+                            padding: 10px 20px;
+                            background: transparent;
+                            border: 2px solid var(--color-primary);
+                            border-radius: 10px;
+                            color: var(--color-primary);
+                            font-size: 1rem;
+                            font-weight: bold;
+                            transition: all 0.3s ease;
+                        }
+                    }
+                }
+            }
+
+            .no-providers {
+                text-align: center;
+                padding: 40px 20px;
+
+                p {
+                    font-size: 1.2rem;
+                    color: var(--color-text-secondary);
+                    margin-bottom: 20px;
+                }
+
+                .platform-list {
+                    display: flex;
+                    justify-content: center;
+                    gap: 15px;
+                    flex-wrap: wrap;
+                    margin-top: 30px;
+
+                    .platform-link {
+                        padding: 12px 24px;
+                        background: var(--color-primary);
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 12px;
+                        font-weight: 600;
+                        transition: all 0.3s ease;
+
+                        &:hover {
+                            background: var(--color-card-bg);
+                            color: var(--color-primary);
+                            border: 2px solid var(--color-primary);
+                            transform: translateY(-2px);
+                        }
+                    }
+                }
+            }
+        }
+
+        .faq-section {
+            background: var(--color-card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            border: 2px solid var(--color-border);
+
+            h2 {
+                font-size: 2rem;
+                color: var(--color-text);
+                margin-bottom: 30px;
+                text-align: center;
+            }
+
+            .faq-item {
+                margin-bottom: 30px;
+                padding-bottom: 30px;
+                border-bottom: 1px solid var(--color-border);
+
+                &:last-child {
+                    margin-bottom: 0;
+                    padding-bottom: 0;
+                    border-bottom: none;
+                }
+
+                h3 {
+                    font-size: 1.4rem;
+                    color: var(--color-text);
+                    margin-bottom: 15px;
+                }
+
+                p {
+                    font-size: 1.1rem;
+                    line-height: 1.7;
+                    color: var(--color-text-secondary);
+                }
+            }
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 1024px) {
+    .where-to-watch-page {
+        .where-content {
+            .movie-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+
+                .movie-poster {
+                    width: 250px;
+                }
+
+                .movie-info {
+                    h1 {
+                        font-size: 2rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .where-to-watch-page {
+        .btn-back {
+            bottom: 15px;
+            left: 15px;
+            padding: 10px 20px;
+            font-size: 1rem;
+        }
+
+        .where-content {
+            padding: 20px 15px;
+
+            .movie-header {
+                padding: 25px 20px;
+
+                .movie-poster {
+                    width: 200px;
+                }
+
+                .movie-info {
+                    h1 {
+                        font-size: 1.8rem;
+                    }
+
+                    .synopsis {
+                        h2 {
+                            font-size: 1.5rem;
+                        }
+
+                        p {
+                            font-size: 1.1rem;
+                        }
+                    }
+                }
+            }
+
+            .streaming-section {
+                padding: 25px 20px;
+
+                h2 {
+                    font-size: 1.7rem;
+                }
+
+                .platform-category {
+                    .platform-list {
+                        grid-template-columns: 1fr;
+                        gap: 15px;
+                    }
+                }
+            }
+
+            .faq-section {
+                padding: 25px 20px;
+
+                h2 {
+                    font-size: 1.7rem;
+                }
+            }
+        }
+    }
+}
