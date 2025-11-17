@@ -1,10 +1,11 @@
 import React from "react";
 import { useFavorites } from "../contexts/FavoritesContext";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getMovieUrl } from "../utils/seo";
 import { getOptimizedImageUrl } from "../utils/imageOptimizer";
 
 const Card = ({ movie }) => {
+  const navigate = useNavigate();
   const { isMovieFavorite, toggleMovieFavorite } = useFavorites();
 
   const dateFormater = (date) => {
@@ -47,15 +48,24 @@ const Card = ({ movie }) => {
   };
 
   const handleToggleFavorite = (e) => {
+    e.stopPropagation(); // ⛔ empêche la navigation
     e.preventDefault();
     toggleMovieFavorite(movie.id);
+  };
+
+  const handleCardClick = () => {
+    navigate(getMovieUrl(movie.id, movie.title));
   };
 
   const isFav = isMovieFavorite(movie.id);
 
   return (
-    <div className="card">
-      <Link to={getMovieUrl(movie.id, movie.title)} className="card-link">
+    <div
+      className="card"
+      onClick={handleCardClick}
+      style={{ cursor: "pointer" }}
+    >
+      <div className="card-link">
         <div className="image-container">
           <img
             src={getOptimizedImageUrl(movie.poster_path, "w500")}
@@ -67,9 +77,11 @@ const Card = ({ movie }) => {
           />
         </div>
         <h2>{movie.title}</h2>
+
         {movie.release_date && (
           <h5>Sorti le : {dateFormater(movie.release_date)}</h5>
         )}
+
         <h4>
           {movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"}/10{" "}
           <span>⭐</span>
@@ -79,8 +91,9 @@ const Card = ({ movie }) => {
 
         {movie.overview && <h3>Synopsis</h3>}
         <p>{movie.overview || "Pas de synopsis disponible"}</p>
-      </Link>
+      </div>
 
+      {/* BOUTON FAVORIS */}
       <button
         className={`btn ${isFav ? "btn-remove" : "btn-add"}`}
         onClick={handleToggleFavorite}

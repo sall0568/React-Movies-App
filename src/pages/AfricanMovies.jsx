@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Card from "../components/Card";
@@ -12,7 +11,6 @@ import { movieAPI } from "../services/api";
 import { useDebounce } from "../hooks/useDebounce";
 
 const AfricanMovies = () => {
-  const navigate = useNavigate();
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
