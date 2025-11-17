@@ -1,7 +1,7 @@
 // src/components/Header.jsx - AVEC LIEN BLOG
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Film, Tv, Heart, Menu, X, BookOpen } from "lucide-react";
+import { Film, Tv, Heart, Menu, X, BookOpen, Globe } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 import { useFavorites } from "../contexts/FavoritesContext";
 
@@ -36,6 +36,16 @@ const Header = () => {
               >
                 <Film size={20} />
                 <span>Films</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/films-africains"
+                className={(nav) => (nav.isActive ? "nav-active" : "")}
+                onClick={() => setMenuOpen(false)}
+              >
+                <Globe size={20} /> {/* Importez Globe depuis lucide-react */}
+                <span>Films Africains</span>
               </NavLink>
             </li>
             <li>

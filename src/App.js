@@ -14,6 +14,7 @@ const PersonDetail = lazy(() => import("./pages/PersonDetail"));
 const TVShows = lazy(() => import("./pages/TVShows"));
 const TVDetail = lazy(() => import("./pages/TVDetail"));
 const SeasonDetail = lazy(() => import("./pages/SeasonDetail"));
+const AfricanMovies = lazy(() => import("./pages/AfricanMovies"));
 
 // Pages Blog
 const Blog = lazy(() => import("./pages/Blog"));
@@ -41,6 +42,7 @@ const AppContent = () => {
           {/* Routes Films */}
           <Route path="/movie/:id" element={<MovieDetail />} />
           <Route path="/movie/:id-:slug" element={<MovieDetail />} />
+          <Route path="/films-africains" element={<AfricanMovies />} />
 
           {/* Routes Séries */}
           <Route
